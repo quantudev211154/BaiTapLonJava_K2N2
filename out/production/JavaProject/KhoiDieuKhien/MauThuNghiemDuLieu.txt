@@ -1,0 +1,24 @@
+
+insert BangDia(TenBD, TheLoai, TinhTrang, HangSX, GhiChu, SoLuongGoc, SoLuongTon, DonGia, GiaThue) 
+values ('anb', 'xxx', 1, 'adasd', NULL, 10, 10, 120000, 11200)
+
+insert NhanVien(TenNV, GioiTinh, SoDT, MoTa)
+values ('sssss', 1, '123123', NULL)
+
+insert TheThanhVien(MaNV, NgayLap, NgayHetHan)
+values (1, GETDATE(), GETDATE())
+
+DECLARE @T1 DATETIME = GETdATE(), @T2 DATETIME = GETdATE()
+
+EXEC THEMPHIEUTHUE 1, 1, @T1, 1, 10, @T2, 12900
+
+
+DECLARE @T3 DATETIME = GETdATE()
+
+EXEC THEMPHIEUTRA 1, 1, @T3, 1, 10, 1, 1291231200
+SELECT * FROM PhieuThue
+SELECT * FROM PhieuTra
+EXEC XOAPHIEUTHUE 1
+EXEC XOAPHIEUTRA 1
+SELECT * FROM ChiTietPhieuThue
+select * from ThongTinPhieuThue

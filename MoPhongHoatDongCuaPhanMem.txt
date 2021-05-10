@@ -1,0 +1,3 @@
+B1: Đăng nhập
+B2: Kiểm tra đăng nhập
+B3: Mở giao diện chính

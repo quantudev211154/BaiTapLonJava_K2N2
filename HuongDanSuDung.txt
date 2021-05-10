@@ -1,0 +1,15 @@
+1. Controller: Chứa code liên quan đến việc liên lạc với database
+2. Design: Các bản thiết kế, mô hình, sơ đồ nằm trong thư mục này
+3. Model: chứa code hiện thực các model như KhachHangModel, BangDiaModel để hiển thị ra table
+4. Entity: chứa các lớp đối tượng
+5. Management: Chứa các lớp quản lý đối tượng
+6. UI: chứa code tạo giao diện ứng dụng
+
+Lưu ý:
+- Khi hoàn thành sửa đổi trên class nào thì phải commit lên GitHub ngay.
+- Nội dung khi commit phải có ý nghĩa rõ ràng
+	VD: git commit -m "Them 1 thuoc tinh"
+- Bắt buộc phải cập nhật các hoạt động vào file Log để viết báo cáo dễ dàng hơn và tường minh hơn
+	trong việc chứng minh việc tham gia hoạt động của thành viên với nhóm.
+- Khi làm xong phần được giao phải tự test code và ghi nhận các lỗi để biết đường debug
+- Bắt buộc dùng chung 1 phiên bản Java là Java 14 và phải add Driver SQL vào

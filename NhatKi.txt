@@ -1,0 +1,14 @@
+18/4: Thiết kế cơ sở dữ liệu - By Tú
+20/4 - 21/4: 
+	- Chỉnh sửa sâu cơ sở dữ liệu
+	- Thiết kế sơ đồ lớp => By Tú
+22/04: 
+	- Viết code tạo cơ sở dữ liệu - By Tú
+	- Cơ cấu lại các thư mục - By Tú
+23/04:
+    - Chỉnh sửa kiểu dữ liệu liên quan đến Mã (int -> String/ int -> varchar(10))
+    - Viết những đối tượng đầu tiên - By Tú
+25/4:
+	- Viết các Model cho các đối tượng - By Tú
+27/4: 
+	- Bổ sung file Báo cáo - By Tú
