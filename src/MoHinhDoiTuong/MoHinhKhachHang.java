@@ -15,7 +15,7 @@ public class MoHinhKhachHang extends AbstractTableModel {
     private final int diaChi = 5;
     private final int soCMND = 6;
     private final ArrayList<KhachHang> dsKhachHang;
-    private String[] header = "Mã khách hàng;Tên khách hàng;Giới tính;Số điện thoại;NV thêm;Địa chỉ;Số CMND".split(";");
+    private String[] header = "Mã khách hàng;Tên khách hàng;Giới tính;Số điện thoại;Mã NV đã thêm;Địa chỉ;Số CMND".split(";");
 
     public MoHinhKhachHang(ArrayList<KhachHang> dsKhachHang){
         this.dsKhachHang = dsKhachHang;
@@ -40,7 +40,7 @@ public class MoHinhKhachHang extends AbstractTableModel {
             case tenNV:
                 return k.getTen();
             case gioiTinh:
-                return k.isGioiTinh();
+                return (k.getGioiTinh() == 1) ? "Nam" : "Nữ";
             case soDT:
                 return k.getSoDT();
             case maNV:

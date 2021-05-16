@@ -1,0 +1,23 @@
+exec THEMBANGDIA 'Anh yeu em', 'tinh cam', 1, 'yamaha', 'yeu yeu', 10, 100000, 15000
+exec THEMKHACHHANG 1, 'Thanh ha', 2, '123123', 'hanoi', '1111222'
+declare @t datetime
+set @t = getdate()
+exec THEMTHETHANHVIEN @t, @t
+
+declare @t datetime
+set @t = getdate()
+exec THEMPHIEUTHUE 1, 1, @t, 1, 5, @t
+
+select * from ThongTinPhieuThue
+select * from DoanhThu
+select * from PhieuChuaTra
+select * from ThongTinPhieuTra
+select * from ChiTietPhieuThue
+SELECT * FROM TheThanhVien
+declare @t datetime
+set @t = getdate()
+exec THEMPHIEUTRA 1, 1, 1, @t, 1, 3, 2
+
+select * from BangDia
+select * from PhieuTra
+SELECT * FROM ChiTietPhieuTra

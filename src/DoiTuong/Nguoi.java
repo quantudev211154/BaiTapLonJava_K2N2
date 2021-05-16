@@ -9,14 +9,14 @@ public abstract class Nguoi {
      * GioiTinh = True => Nam (Male)
      * GioiTinh = False => Nu (Female)
      */
-    private boolean gioiTinh = true;
+    private int gioiTinh = 1;
     private String soDT = "";
 
     public Nguoi(int ID) {
         this.ID = ID;
     }
 
-    public Nguoi(int ID, String ten, boolean gioiTinh, String soDT) {
+    public Nguoi(int ID, String ten, int gioiTinh, String soDT) {
         this.ID = ID;
         Ten = ten;
         this.gioiTinh = gioiTinh;
@@ -36,11 +36,11 @@ public abstract class Nguoi {
         Ten = ten;
     }
 
-    public boolean isGioiTinh() {
+    public int getGioiTinh() {
         return gioiTinh;
     }
 
-    public void setGioiTinh(boolean gioiTinh) {
+    public void setGioiTinh(int gioiTinh) {
         this.gioiTinh = gioiTinh;
     }
 
@@ -53,19 +53,6 @@ public abstract class Nguoi {
     }
     //
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Nguoi)) return false;
-        Nguoi nguoi = (Nguoi) o;
-        return getID() == nguoi.getID();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getID());
-    }
-
     /**
      * - gioiTinh = true => return "Nam"
      * - gioiTinh = false => return "Nữ"
@@ -73,7 +60,7 @@ public abstract class Nguoi {
      */
     @Override
     public String toString() {
-        if (gioiTinh == true)
+        if (gioiTinh == 1)
             return ID + ";" + Ten + ";" + "Nam" + ";" + soDT;
         return ID + ";" + Ten + ";" + "Nữ" + ";" + soDT;
     }

@@ -2,54 +2,47 @@ package DoiTuong;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class PhieuTra extends Phieu {
-    private ArrayList<Boolean> dsTinhTrangDia = new ArrayList<Boolean>();
-    private ArrayList<Double> dsTienPhat = new ArrayList<Double>();
-    private double tongTienPhat = 0;
+    public int maPhieuThue = 0;
+    public int tinhTrangDia = 1;
+    public double soTienPhat = 0;
+
+    public PhieuTra(int maPhieu, int maThe, int maNV, int maBD, int soLuong, Date ngayLap, int maPhieuThue, int tinhTrangDia, double soTienPhat) {
+        super(maPhieu, maThe, maNV, maBD, soLuong, ngayLap);
+        this.maPhieuThue = maPhieuThue;
+        this.tinhTrangDia = tinhTrangDia;
+        this.soTienPhat = soTienPhat;
+    }
 
     public PhieuTra(int maPhieu) {
         super(maPhieu);
     }
 
-    public PhieuTra(int maPhieu, int maThe, int maNV, ArrayList<BangDia> dsBangDia, LocalDate ngayLap, ArrayList<Boolean> dsTinhTrangDia) {
-        super(maPhieu, maThe, maNV, dsBangDia, ngayLap);
-        this.dsTinhTrangDia = dsTinhTrangDia;
-        setDsTienPhat();
-        setTongTienPhat();
+    public int getMaPhieuThue() {
+        return maPhieuThue;
     }
 
-    public ArrayList<Boolean> getDsTinhTrangDia() {
-        return dsTinhTrangDia;
+    public int getTinhTrangDia() {
+        return tinhTrangDia;
     }
 
-    public void setDsTinhTrangDia(ArrayList<Boolean> dsTinhTrangDia) {
-        this.dsTinhTrangDia = dsTinhTrangDia;
+    public void setTinhTrangDia(int tinhTrangDia) {
+        this.tinhTrangDia = tinhTrangDia;
     }
 
-    public ArrayList<Double> getDsTienPhat() {
-        return dsTienPhat;
+    public double getSoTienPhat() {
+        return soTienPhat;
     }
 
-    public void setDsTienPhat() {
-        for (Boolean sta : dsTinhTrangDia){
-            if (sta == false)
-                this.dsTienPhat.add(0.0);
-            else{
-                int loc = dsTienPhat.indexOf(sta);
-                double tienPhat = getDsBangDia().get(loc).getDonGia();
-                this.dsTienPhat.add(tienPhat);
-            }
-        }
+    public void setSoTienPhat(double soTienPhat) {
+        this.soTienPhat = soTienPhat;
     }
 
-    public double getTongTienPhat() {
-        return tongTienPhat;
-    }
-
-    public void setTongTienPhat() {
-        for (Double d : dsTienPhat)
-            this.tongTienPhat += d;
+    @Override
+    public String toString() {
+       return super.toString() + ";" + maPhieuThue + ";" + tinhTrangDia + ";" + soTienPhat;
     }
 
 }

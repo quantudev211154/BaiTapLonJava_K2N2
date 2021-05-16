@@ -1,19 +1,26 @@
 package MoHinhDoiTuong;
 
+import DoiTuong.Phieu;
 import DoiTuong.PhieuTra;
 
 import javax.swing.table.AbstractTableModel;
+import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MoHinhPhieuTra extends AbstractTableModel {
-    private final int maPhieu = 0;
-    private final int maThe = 1;
-    private final int dsBangDia = 2;
-    private final int ngayLap = 3;
-    private final int dsTinhTrangDia = 4;
-    private final int tongTienPhat = 5;
-    private final ArrayList<PhieuTra> dsPhieuTra;
-    private String[] header = "Mã phiếu trả;Mã thẻ KH Trả;DS Đĩa trả;Ngày Trả;DS Tình trạng đĩa trả;Tổng tiền phạt".split(";");
+    private static final int maPhieu = 0;
+    private static final int maThe = 1;
+    private static final int maNV = 2;
+    private static final int ngayLap = 3;
+    private static final int maBD = 4;
+    private static final int soLuong = 5;
+    private static final int maPhieuThue = 6;
+    private static final int tinhTrangDia = 7;
+    private static final int soTienPhat = 8;
+    private ArrayList<PhieuTra> dsPhieuTra;
+    private String[] tieuDe = "Mã phiếu trả;Mã thẻ;Mã NV Lập;Ngày lập;Mã đĩa thuê;Số lượng;Mã phiếu thuê;Tình Trạng đĩa;Số tiền phạt".split(";");
 
     public MoHinhPhieuTra(ArrayList<PhieuTra> dsPhieuTra){
         this.dsPhieuTra = dsPhieuTra;
@@ -26,25 +33,34 @@ public class MoHinhPhieuTra extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return header.length;
+        return tieuDe.length;
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         PhieuTra p = dsPhieuTra.get(rowIndex);
+        Locale vn = new Locale("vi", "vn");
+        NumberFormat nf = NumberFormat.getCurrencyInstance(vn);
+        DateFormat df = DateFormat.getDateInstance(1, new Locale("vi", "vn"));
         switch (columnIndex){
             case maPhieu:
                 return p.getMaPhieu();
             case maThe:
                 return p.getMaThe();
-            case dsBangDia:
-                return p.getDsBangDia();
+            case maNV:
+                return p.getMaNV();
             case ngayLap:
-                return p.getNgayLap();
-            case dsTinhTrangDia:
-                return p.getDsTinhTrangDia();
-            case tongTienPhat:
-                return p.getTongTienPhat();
+                return df.format(p.getNgayLap());
+            case maBD:
+                return p.getMaBD();
+            case soLuong:
+                return p.getSoLuong();
+            case maPhieuThue:
+                return p.getMaPhieuThue();
+            case tinhTrangDia:
+                return (p.getTinhTrangDia() == 1) ? "Hoàn hảo" : "Đã hỏng";
+            case soTienPhat:
+                return nf.format(p.getSoTienPhat());
             default:
                 return p;
         }
@@ -52,6 +68,6 @@ public class MoHinhPhieuTra extends AbstractTableModel {
 
     @Override
     public String getColumnName(int column) {
-        return header[column];
+        return tieuDe[column];
     }
 }

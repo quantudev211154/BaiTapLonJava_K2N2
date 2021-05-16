@@ -35,7 +35,7 @@ public class MoHinhTaiKhoan extends AbstractTableModel {
             case matKhau:
                 return t.getMatKhau();
             case loaiTK:
-                return t.isLoaiTK();
+                return (t.getLoaiTK() == 1) ? "Quản trị viên" : "Nhân viên";
             default:
                 return t;
         }

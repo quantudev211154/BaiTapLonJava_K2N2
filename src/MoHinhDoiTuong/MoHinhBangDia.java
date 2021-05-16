@@ -4,7 +4,9 @@ package MoHinhDoiTuong;
 import DoiTuong.BangDia;
 
 import javax.swing.table.AbstractTableModel;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MoHinhBangDia extends AbstractTableModel {
     private final int maBD = 0;
@@ -38,6 +40,8 @@ public class MoHinhBangDia extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         BangDia b = dsBangDia.get(rowIndex);
+        Locale vn = new Locale("vi", "vn");
+        NumberFormat nf = NumberFormat.getCurrencyInstance(vn);
         switch (columnIndex){
             case maBD:
                 return b.getMaBD();
@@ -46,7 +50,7 @@ public class MoHinhBangDia extends AbstractTableModel {
             case theLoai:
                 return b.getTheLoai();
             case tinhTrang:
-                return b.isTinhTrang();
+                return b.isTinhTrang() ? "Hoàn hảo" : "Hỏng";
             case hangSX:
                 return b.getHangSX();
             case ghiChu:
@@ -56,9 +60,9 @@ public class MoHinhBangDia extends AbstractTableModel {
             case soLuongTon:
                 return b.getSoLuongTon();
             case donGia:
-                return b.getDonGia();
+                return nf.format(b.getDonGia());
             case giaThue:
-                return b.getGiaThue();
+                return nf.format(b.getGiaThue());
             default:
                 return b;
         }
@@ -68,4 +72,5 @@ public class MoHinhBangDia extends AbstractTableModel {
     public String getColumnName(int column) {
         return header[column];
     }
+
 }

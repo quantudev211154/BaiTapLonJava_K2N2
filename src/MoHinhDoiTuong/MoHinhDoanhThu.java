@@ -4,7 +4,10 @@ package MoHinhDoiTuong;
 import DoiTuong.DoanhThu;
 
 import javax.swing.table.AbstractTableModel;
+import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MoHinhDoanhThu extends AbstractTableModel {
     private final int maTK = 0;
@@ -32,17 +35,20 @@ public class MoHinhDoanhThu extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         DoanhThu d = dsDoanhThu.get(rowIndex);
+        Locale vn = new Locale("vi", "vn");
+        NumberFormat nf = NumberFormat.getCurrencyInstance(vn);
+        DateFormat df = DateFormat.getDateInstance(1, new Locale("vi", "vn"));
         switch (columnIndex){
             case maTK:
                 return d.getMaTK();
             case maPhieu:
                 return d.getMaPhieu();
             case loaiPhieu:
-                return d.isLoaiPhieu();
+                return (d.getLoaiPhieu() == 1) ? "Phiếu thuê" : "Phiếu trả";
             case soTien:
-                return d.getSoTien();
+                return nf.format(d.getSoTien());
             case thoiGian:
-                return d.getThoiGian();
+                return df.format(d.getThoiGian());
             default:
                 return d;
         }

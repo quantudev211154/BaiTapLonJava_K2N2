@@ -38,7 +38,9 @@ public class MoHinhNhanVien extends AbstractTableModel {
             case tenNV:
                 return n.getTen();
             case gioiTinh:
-                return n.isGioiTinh();
+                return (n.getGioiTinh() == 1) ? "Nam" : "Nữ";
+            case soDT:
+                return n.getSoDT();
             case moTa:
                 return n.getMoTa();
             default:

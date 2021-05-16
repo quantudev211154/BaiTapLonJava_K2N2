@@ -9,11 +9,12 @@ public class TaiKhoan {
      * loaiTK = True => Quan tri vien (Administrator)
      * loaiTK = False => NV binh thuong (Staff)
      */
-    private boolean loaiTK = false;
+    private int loaiTK = 2;
 
-    public TaiKhoan(int maNV, String matKhau) {
+    public TaiKhoan(int maNV, String matKhau, int loaiTK) {
         this.maNV = maNV;
         this.matKhau = matKhau;
+        this.loaiTK = loaiTK;
     }
 
     public TaiKhoan(int maNV) {
@@ -32,26 +33,17 @@ public class TaiKhoan {
         this.matKhau = matKhau;
     }
 
-    public boolean isLoaiTK() {
+    public int getLoaiTK() {
         return loaiTK;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TaiKhoan)) return false;
-        TaiKhoan taiKhoan = (TaiKhoan) o;
-        return getMaNV() == taiKhoan.getMaNV();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getMaNV());
+    public void setLoaiTK(int loaiTK) {
+        this.loaiTK = loaiTK;
     }
 
     @Override
     public String toString() {
-        if (loaiTK == true)
+        if (loaiTK == 1)
             return maNV + ";" + matKhau + ";" + "QTV";
         return maNV + ";" + matKhau + ";" + "Nhan Vien";
     }

@@ -3,49 +3,36 @@ package DoiTuong;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class PhieuThue extends Phieu {
-    private LocalDate ngayHetHan = LocalDate.now();
-    private ArrayList<Double> dsGiaThue = new ArrayList<Double>();
+    private Date ngayHetHan = new Date();
     private double tongTienThue = 0;
 
-    public PhieuThue(int maPhieu, int maThe, int maNV, ArrayList<BangDia> dsBangDia, LocalDate ngayLap, LocalDate ngayHetHan) {
-        super(maPhieu, maThe, maNV, dsBangDia, ngayLap);
+    public PhieuThue(int maPhieu, int maThe, int maNV, int maBD, int soLuong, Date ngayLap, Date ngayHetHan, double tongTienThue) {
+        super(maPhieu, maThe, maNV, maBD, soLuong, ngayLap);
         this.ngayHetHan = ngayHetHan;
-        setGiaThue();
-        setTongTienThue();
+        this.tongTienThue = tongTienThue;
     }
 
-    public PhieuThue(int maPhieu) {
-        super(maPhieu);
-    }
-
-    public LocalDate getNgayHetHan() {
+    public Date getNgayHetHan() {
         return ngayHetHan;
     }
 
-    public void setNgayHetHan(LocalDate ngayHetHan) {
+    public void setNgayHetHan(Date ngayHetHan) {
         this.ngayHetHan = ngayHetHan;
-    }
-
-    public ArrayList<Double> getGiaThue() {
-        return dsGiaThue;
-    }
-
-    public void setGiaThue() {
-        long soNgayThue = ChronoUnit.DAYS.between(ngayHetHan, getNgayLap());
-        for (BangDia b : getDsBangDia()){
-            this.dsGiaThue.add(b.getGiaThue() * soNgayThue);
-        }
     }
 
     public double getTongTienThue() {
         return tongTienThue;
     }
 
-    public void setTongTienThue() {
-        for (Double d : dsGiaThue){
-            tongTienThue += d;
-        }
+    public void setTongTienThue(double tongTienThue) {
+        this.tongTienThue = tongTienThue;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + ";" + ngayHetHan + ";" + tongTienThue;
     }
 }

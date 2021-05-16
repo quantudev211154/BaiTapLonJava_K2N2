@@ -1,0 +1,509 @@
+﻿-- NHÓM 5 -> ĐỀ TÀI 1: Quản lý và cho thuê băng đĩa
+-- Danh sách thành viên:
+	-- Phạm Quan Tú - 19482831 -> Nhóm trưởng
+	-- Phạm Quang Minh - 17035151
+	-- Trịnh Anh Chung - 19494291
+-- NGƯỜI VIẾT CƠ SỞ DỮ LIỆU: PHẠM QUAN TÚ - 19482831
+USE master
+GO
+IF EXISTS (select * from sysdatabases where name='DuLieu')
+		drop database DuLieu
+GO
+
+DECLARE @device_directory NVARCHAR(520)
+SELECT @device_directory = SUBSTRING(filename, 1, CHARINDEX(N'master.mdf', LOWER(filename)) - 1)
+FROM master.dbo.sysaltfiles WHERE dbid = 1 AND fileid = 1
+
+EXECUTE (N'CREATE DATABASE DuLieu
+  ON PRIMARY (NAME = N''DuLieu'', FILENAME = N''' + @device_directory + N'DuLieu.mdf'')
+  LOG ON (NAME = N''DuLieu_Log'',  FILENAME = N''' + @device_directory + N'DuLieu.ldf'')')
+GO
+
+USE DuLieu
+GO
+
+CREATE TABLE BangDia(
+	"MaBD" int identity(1,1),
+	"TenBD" nvarchar(100) NOT NULL,
+	"TheLoai" nvarchar(50) NOT NULL,
+	"TinhTrang" tinyint NOT NULL,
+	"HangSX" nvarchar(50) NOT NULL,
+	"GhiChu" nvarchar(150) NULL,
+	"SoLuongGoc" int NOT NULL,
+	"SoLuongTon" int NOT NULL,
+	"DonGia" money NOT NULL,
+	"GiaThue" money NOT NULL,
+	CONSTRAINT "PK_MaBD" PRIMARY KEY ("MaBD")
+)
+GO
+
+CREATE TABLE NhanVien(
+	"MaNV" int identity(1,1),
+	"TenNV" nvarchar(50) NOT NULL,
+	"GioiTinh" tinyint NOT NULL,
+	"SoDT" nvarchar(10) NOT NULL,
+	"MoTa" nvarchar(150) NULL,
+	CONSTRAINT "PK_MaNV" PRIMARY KEY ("MaNV")
+)
+GO
+
+CREATE TABLE TaiKhoan(
+	"MaNV" int NOT NULL,
+	"MatKhau" varchar(15) NOT NULL,
+	"LoaiTK" tinyint NOT NULL,
+	CONSTRAINT "FK_MaNV_0" FOREIGN KEY ("MaNV")
+		REFERENCES NhanVien("MaNV") ON DELETE CASCADE ON UPDATE CASCADE
+)
+GO 
+
+CREATE TABLE KhachHang(
+	"MaKH" int identity(1,1),
+	"MaNV" int NOT NULL,
+	"HoTen" nvarchar(50) NOT NULL,
+	"GioiTinh" tinyint NOT NULL,
+	"SoDT" varchar(10) NOT NULL,
+	"DiaChi" nvarchar(200) NOT NULL,
+	"SoCMND" varchar(9) NOT NULL,
+	CONSTRAINT "PK_MaKH" PRIMARY KEY ("MaKH"),
+	CONSTRAINT "FK_MaNV_KH" FOREIGN KEY ("MaKH")
+		REFERENCES NhanVien("MaNV")
+)
+GO
+
+CREATE TABLE TheThanhVien(
+	"MaThe" int identity(1,1),
+	"MaKH" int NOT NULL,
+	"NgayLap" datetime NOT NULL,
+	"NgayHetHan" datetime NOT NULL,
+	CONSTRAINT "PK_MaThe" PRIMARY KEY ("MaThe"),
+	CONSTRAINT "FK_MaKH" FOREIGN KEY ("MaKH")
+		REFERENCES KhachHang("MaKH") ON DELETE CASCADE ON UPDATE CASCADE
+)
+GO
+
+CREATE TABLE PhieuThue(
+	"MaPhieuThue" int identity(1,1),
+	"MaThe" int NOT NULL,
+	"MaNV" int NOT NULL,
+	"NgayLap" datetime NOT NULL,
+	CONSTRAINT "PK_MaPhieuThue" PRIMARY KEY ("MaPhieuThue"),
+	CONSTRAINT "FK_MaThe_1" FOREIGN KEY ("MaThe")
+		REFERENCES TheThanhVien("MaThe"), --ON DELETE NO ACTION ON UPDATE NO ACTION,
+	CONSTRAINT "FK_MaNV_2" FOREIGN KEY ("MaNV")
+		REFERENCES NhanVien("MaNV") --ON DELETE NO ACTION ON UPDATE NO ACTION
+)
+GO
+
+CREATE TABLE ChiTietPhieuThue(
+	"MaPhieuThue" int NOT NULL,
+	"MaBD" int NOT NULL,
+	"SoLuong" int NOT NULL,
+	"NgayHetHan" datetime NOT NULL,
+	"ThanhTien" money NOT NULL,
+	CONSTRAINT "FK_MaPhieuThue" FOREIGN KEY ("MaPhieuThue")
+		REFERENCES PhieuThue("MaPhieuThue"), --ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT "FK_MaBD" FOREIGN KEY ("MaBD")
+		REFERENCES BangDia("MaBD") --ON DELETE NO ACTION ON UPDATE CASCADE
+)
+GO
+
+CREATE TABLE PhieuChuaTra(
+	"MaPhieu" int NOT NULL,
+	"MaThe" int NOT NULL,
+	"MaNV" int NOT NULL,
+	"NgayLap" datetime NOT NULL,
+	"MaBD" int NOT NULL,
+	"SoLuong" int NOT NULL,
+	"NgayHetHan" datetime NOT NULL,
+	"ThanhTien" money NOT NULL,
+	CONSTRAINT "FK_MaPhieu_ChuaTra" FOREIGN KEY ("MaPhieu")
+		REFERENCES PhieuThue("MaPhieuThue") ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT "FK_MaThe_KHMuon" FOREIGN KEY ("MaThe")
+		REFERENCES TheThanhVien("MaThe"),
+	CONSTRAINT "FK_MaNV_TaoPhieu" FOREIGN KEY ("MaNV")
+		REFERENCES NhanVien("MaNV"),
+	CONSTRAINT "FK_MaBD_ChuaTra" FOREIGN KEY ("MaBD")
+		REFERENCES BangDia("MaBD")
+)
+
+CREATE TABLE PhieuTra(
+	"MaPhieuTra" int identity(1,1) NOT NULL,
+	"MaPhieuThue" int NOT NULL,
+	"MaThe" int NOT NULL,
+	"MaNV" int NOT NULL,
+	"NgayLap" datetime NOT NULL,
+	CONSTRAINT "PK_MaPhieuTra" PRIMARY KEY ("MaPhieuTra"),
+	CONSTRAINT "FK_PhieuThue_Tra" FOREIGN KEY ("MaPhieuThue")
+		REFERENCES PhieuThue("MaPhieuThue"),
+	CONSTRAINT "FK_MaThe_2" FOREIGN KEY ("MaThe")
+		REFERENCES TheThanhVien("MaThe"),-- ON DELETE NO ACTION ON UPDATE NO ACTION,
+	CONSTRAINT "FK_MaNV_3" FOREIGN KEY ("MaNV")
+		REFERENCES NhanVien("MaNV") --ON DELETE NO ACTION ON UPDATE NO ACTION
+)
+GO
+
+CREATE TABLE ChiTietPhieuTra(
+	"MaPhieuTra" int NOT NULL,
+	"MaBD" int NOT NULL,
+	"SoLuong" int NOT NULL,
+	"TinhTrangDia" tinyint NOT NULL,
+	"SoTienPhat" money NOT NULL,
+	CONSTRAINT "FK_MaPhieuTra" FOREIGN KEY ("MaPhieuTra")
+		REFERENCES PhieuTra("MaPhieuTra"), --ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT "FK_MaBD2" FOREIGN KEY ("MaBD")
+		REFERENCES BangDia("MaBD") --ON DELETE NO ACTION ON UPDATE NO ACTION
+)
+GO
+
+CREATE TABLE DoanhThu(
+	"MaTK" int identity(1,1),
+	"MaPhieu" int NOT NULL,
+	"LoaiPhieu" tinyint NOT NULL,
+	"SoTien" money NOT NULL,
+	"ThoiGian" datetime NOT NULL,
+	CONSTRAINT "PK_MaTK" PRIMARY KEY ("MaTK"),
+	CONSTRAINT "FK_MaPhieu_Thue" FOREIGN KEY ("MaPhieu")
+		 REFERENCES PhieuThue("MaPhieuThue")
+)
+GO
+
+CREATE PROC THEMBANGDIA @TENBD NVARCHAR(100), @THELOAI NVARCHAR(50), @TINHTRANG TINYINT, @HANGSX NVARCHAR(50), 
+						@GHICHU NVARCHAR(150), @SOLUONGGOC INT, @DONGIA MONEY, @GIATHUE MONEY
+AS
+	IF EXISTS (SELECT * FROM BangDia WHERE TenBD = @TENBD)
+		BEGIN
+			UPDATE BangDia
+			SET SoLuongGoc = SoLuongGoc + @SOLUONGGOC,
+				SoLuongTon = SoLuongTon + @SOLUONGGOC
+				
+			WHERE TenBD = @TENBD
+		END
+	ELSE
+		BEGIN
+			INSERT BangDia([TenBD], [TheLoai], [TinhTrang], [HangSX], [GhiChu], [SoLuongGoc], [SoLuongTon], [DonGia], [GiaThue])
+			VALUES (@TENBD, @THELOAI, @TINHTRANG, @HANGSX, @GHICHU, @SOLUONGGOC, @SOLUONGGOC, @DONGIA, @GIATHUE)
+		END
+GO
+
+-- KHONG CHO CAP NHAT MABD, TINHTRANGDIA
+CREATE PROC CAPNHATDIA @MABD INT, @TENBD NVARCHAR(100), @THELOAI NVARCHAR(50), @HANGSX NVARCHAR(50), 
+						@GHICHU NVARCHAR(150), @SOLUONGGOC INT, @DONGIA MONEY, @GIATHUE MONEY
+AS
+	BEGIN
+		DECLARE @SLCHENHLECH INT, @SLGOC INT
+		SET @SLGOC = (SELECT SoLuongGoc FROM BangDia WHERE MaBD = @MABD)
+		SET @SLCHENHLECH = @SOLUONGGOC - @SLGOC
+
+		-- TIEN HANH CAP NHAT
+		UPDATE BangDia
+		SET TenBD = @TENBD,
+			TheLoai = @THELOAI,
+			HangSX = @HANGSX,
+			GhiChu = @GHICHU,
+			SoLuongGoc = @SOLUONGGOC,
+			SoLuongTon = SoLuongTon + @SLCHENHLECH,
+			DonGia = @DONGIA,
+			GiaThue = @GIATHUE
+		WHERE MaBD = @MABD
+	END
+GO
+
+CREATE PROC XOABANGDIA @MABD INT
+AS
+	BEGIN
+		DELETE FROM BangDia
+		WHERE MaBD = @MABD
+	END
+GO
+
+CREATE PROC THEMPHIEUTHUE @MATHE INT, @MANV INT, @NGAYLAP DATETIME, @MABD INT, @SOLUONG INT, 
+							@NGAYHH DATETIME
+AS
+	BEGIN
+		DECLARE @SODIACONLAI INT, @TT MONEY, @MAPHIEU INT
+		SET @SODIACONLAI = (SELECT SoLuongTon FROM BangDia WHERE MaBD = @MABD)
+		SET @TT = (SELECT GiaThue FROM BangDia WHERE MaBD = @MABD)
+		IF (@SODIACONLAI > 0 AND @SOLUONG <= @SODIACONLAI) -- XEM SO DIA CON LAI CUA MABD CAN MUON
+			BEGIN
+				INSERT PhieuThue(MaThe, MaNV, NgayLap) values (@MATHE, @MANV, @NGAYLAP)
+				DECLARE @MAPHIEUTHUE INT
+				SET @MAPHIEUTHUE = (SELECT TOP 1 MaPhieuThue FROM PhieuThue ORDER BY MaPhieuThue DESC)
+				INSERT ChiTietPhieuThue(MaPhieuThue, MaBD, SoLuong, NgayHetHan, ThanhTien) VALUES (@MAPHIEUTHUE, @MABD, @SOLUONG, @NGAYHH, @TT)
+
+				--UPDATE SO LUONG DIA CON LAI
+				UPDATE BangDia
+				SET SoLuongTon = SoLuongTon - @SOLUONG
+				WHERE MaBD = @MABD
+
+				-- THEM VAO DOANH THU
+				INSERT DoanhThu([MaPhieu], [LoaiPhieu], [SoTien], [ThoiGian]) VALUES (@MAPHIEUTHUE, 1, @TT, @NGAYLAP)
+
+				-- Them vao danh sach dia chua tra
+				INSERT PhieuChuaTra
+				SELECT TOP 1 P.MaPhieuThue, P.MaThe, P.MaNV, P.NgayLap, C.MaBD, C.SoLuong, C.NgayHetHan, C.ThanhTien
+				FROM PhieuThue P JOIN ChiTietPhieuThue C
+					ON P.MaPhieuThue = C.MaPhieuThue
+				ORDER BY MaPhieuThue DESC
+				RETURN 1 
+			END
+		ELSE
+			RETURN -1 -- LOI, KHONG DU DIA DE CHO MUON
+	END
+GO
+
+CREATE PROC XOAPHIEUTHUE @MAPHIEUTHUE INT
+AS
+	BEGIN
+		--UDATE SO LUONG DIA
+		DECLARE @MABD INT, @SODIAHUY INT
+		SET @MABD = (SELECT MaBD FROM ChiTietPhieuThue WHERE MaPhieuThue = @MAPHIEUTHUE)
+		SET @SODIAHUY = (SELECT SoLuong FROM ChiTietPhieuThue WHERE MaPhieuThue = @MAPHIEUTHUE)
+		UPDATE BangDia
+		SET SoLuongTon = SoLuongTon + @SODIAHUY
+		WHERE MaBD = @MABD
+
+		-- THUC HIEN LENH XOA
+		DELETE FROM ChiTietPhieuThue WHERE MaPhieuThue = @MAPHIEUTHUE
+		DELETE FROM PhieuChuaTra WHERE MaPhieu = @MAPHIEUTHUE
+		DELETE FROM PhieuThue WHERE MaPhieuThue = @MAPHIEUTHUE
+	END
+GO 
+
+
+CREATE PROC THEMPHIEUTRA @MAPHIEUTHUE INT, @MATHE INT, @MANV INT, @NGAYLAP DATETIME, @MABD INT, @SOLUONG INT, 
+						@TINHTRANGDIA TINYINT
+AS
+	BEGIN
+		DECLARE @SOTIENPHAT MONEY
+		SET @SOTIENPHAT = 0
+		IF (@TINHTRANGDIA = 1)
+			BEGIN
+				INSERT PhieuTra(MaPhieuThue, MaThe, MaNV, NgayLap) values (@MAPHIEUTHUE, @MATHE, @MANV, @NGAYLAP)
+				BEGIN
+					DECLARE @MaPhieuTra int
+					SET @MaPhieuTra = (SELECT TOP 1 MaPhieuTra FROM PhieuTra ORDER BY MaPhieuTra DESC)
+					INSERT ChiTietPhieuTra(MaPhieuTra, MaBD, SoLuong, TinhTrangDia, SoTienPhat) VALUES (@MaPhieuTra, @MABD, @SOLUONG, @TINHTRANGDIA, @SOTIENPHAT)
+				END
+				-- UPDATE SO LUONG BANG DIA
+				UPDATE BangDia
+				SET SoLuongTon = SoLuongTon + @SOLUONG
+				WHERE MaBD = @MABD AND @TINHTRANGDIA = 1
+			END
+		ELSE
+			BEGIN
+				SET @SOTIENPHAT = (SELECT DonGia FROM BangDia WHERE MaBD = @MABD) * @SOLUONG
+				INSERT PhieuTra(MaPhieuThue, MaThe, MaNV, NgayLap) values (@MAPHIEUTHUE, @MATHE, @MANV, @NGAYLAP)
+				DECLARE @MaPhieuTra_M int
+				SET @MaPhieuTra_M = (SELECT TOP 1 MaPhieuTra FROM PhieuTra ORDER BY MaPhieuTra DESC)
+				INSERT ChiTietPhieuTra(MaPhieuTra, MaBD, SoLuong, TinhTrangDia, SoTienPhat) VALUES (@MaPhieuTra_M, @MABD, @SOLUONG, @TINHTRANGDIA, @SOTIENPHAT)
+			END
+
+		-- Xu li tren dia chua tra
+		--UPDATE DIA CHUA TRA
+		UPDATE PhieuChuaTra
+		SET SoLuong = SoLuong - @SOLUONG
+		WHERE MaPhieu = @MAPHIEUTHUE
+		IF (SELECT SoLuong FROM PhieuChuaTra WHERE MaPhieu = @MAPHIEUTHUE) = 0
+				BEGIN
+					DELETE FROM PhieuChuaTra
+					WHERE MaPhieu = @MAPHIEUTHUE
+				END
+	END
+GO
+
+CREATE PROC XOAPHIEUTRA @MAPHIEUTRA INT
+AS
+	BEGIN
+		--UDATE SO LUONG DIA
+		DECLARE @MABD INT, @SODIATRA INT
+		SET @MABD = (SELECT MaBD FROM ChiTietPhieuTra WHERE MaPhieuTra = @MAPHIEUTRA)
+		SET @SODIATRA = (SELECT SoLuong FROM ChiTietPhieuTra WHERE MaPhieuTra = @MAPHIEUTRA)
+		UPDATE BangDia
+		SET SoLuongTon = SoLuongTon - @SODIATRA
+		WHERE MaBD = @MABD
+
+		-- THUC HIEN LENH XOA
+		DELETE FROM ChiTietPhieuTra WHERE MaPhieuTra = @MAPHIEUTRA
+		DELETE FROM PhieuTra WHERE MaPhieuTra = @MAPHIEUTRA
+	END
+GO
+
+CREATE PROC THEMNHANVIEN @TENNV NVARCHAR(50), @GIOITINH TINYINT, @SODT NVARCHAR(10), @MOTA NVARCHAR(150)
+AS
+	BEGIN
+		IF NOT EXISTS (SELECT TenNV FROM NhanVien WHERE TenNV = @TENNV)
+			BEGIN
+				INSERT NhanVien([TenNV], [GioiTinh], [SoDT], [MoTa]) 
+				VALUES (@TENNV, @GIOITINH, @SODT, @MOTA)
+			END
+	END
+GO
+
+
+CREATE PROC CAPNHATNHANVIEN @MANV INT, @SODT NVARCHAR(10), @MOTA NVARCHAR(15)
+AS
+	BEGIN
+		UPDATE NhanVien
+		SET SoDT = @SODT,
+			MoTa = @MOTA
+		WHERE MaNV = @MANV
+	END
+GO
+
+CREATE PROC XOANHANVIEN @MANV INT
+AS
+	BEGIN
+		DELETE FROM TaiKhoan WHERE MaNV = @MANV
+		DELETE FROM NhanVien WHERE MaNV = @MANV
+	END
+GO
+
+CREATE VIEW ThongTinPhieuThue
+AS
+	SELECT P.MaPhieuThue, P.MaThe, P.MaNV, P.NgayLap, C.MaBD, C.SoLuong, C.NgayHetHan, C.ThanhTien
+	FROM PhieuThue P JOIN ChiTietPhieuThue C
+			ON P.MaPhieuThue = C.MaPhieuThue
+GO
+
+CREATE VIEW DANHSACHPHIEUCHUATRA
+AS
+	SELECT P.MaPhieuThue, P.MaThe, P.MaNV, P.NgayLap, C.MaBD, C.SoLuong, C.NgayHetHan, C.ThanhTien
+	FROM PhieuThue P JOIN ChiTietPhieuThue C
+		ON P.MaPhieuThue = C.MaPhieuThue
+GO
+
+CREATE VIEW ThongTinPhieuTra
+AS
+	SELECT P.MaPhieuTra, P.MaPhieuThue, P.MaThe, P.ManV, P.NgayLap, C.MaBD, C.SoLuong, C.TinhTrangDia, C.SoTienPhat
+	FROM PhieuTra P JOIN ChiTietPhieuTra C
+			ON P.MaPhieuTra = C.MaPhieuTra
+GO
+
+
+CREATE FUNCTION XemDoanhThuTrongNgay()
+RETURNS MONEY
+AS
+	BEGIN
+		RETURN (
+			SELECT SUM(SoTien) FROM DoanhThu
+			WHERE DAY(ThoiGian) = DAY(GETDATE())
+				AND MONTH(ThoiGian) = MONTH(GETDATE())
+				AND YEAR(ThoiGian) = YEAR(GETDATE())
+		)
+	END
+GO
+
+
+CREATE FUNCTION XEMDOANHTHUTHANGHIENTAI()
+RETURNS MONEY
+AS
+	BEGIN
+		RETURN (
+			SELECT SUM(SoTien) FROM DoanhThu
+			WHERE MONTH(ThoiGian) = MONTH(GETDATE())
+				AND YEAR(ThoiGian) = YEAR(GETDATE())
+		)
+	END
+GO
+
+CREATE FUNCTION XEMDOANHTHUTHANG(@THANG INT, @NAM INT)
+RETURNS MONEY
+AS
+	BEGIN
+		RETURN(
+			SELECT SUM(SoTien)
+			FROM DoanhThu
+			WHERE MONTH(ThoiGian) = @THANG AND YEAR(ThoiGian) = @NAM
+		)
+	END
+GO
+
+CREATE PROC THEMKHACHHANG @MANV INT, @HOTEN NVARCHAR(50), @GIOITINH TINYINT, @SODT VARCHAR(10), @DIACHI NVARCHAR(200), @SOCMND VARCHAR(9)
+AS
+	BEGIN
+		IF NOT EXISTS (SELECT HoTen FROM KhachHang WHERE HoTen = @HOTEN)
+			BEGIN
+				INSERT KhachHang([MaNV], [HoTen], [GioiTinh], [SoDT], [DiaChi], [SoCMND])
+				VALUES (@MANV ,@HOTEN, @GIOITINH, @SODT, @DIACHI, @SOCMND)
+			END
+	END
+GO
+
+CREATE PROC CAPNHATKHACHHANG @MAKH INT, @SODT VARCHAR(10), @DIACHI NVARCHAR(200)
+AS
+	BEGIN
+		UPDATE KhachHang
+		SET SoDT = @SODT,
+			DiaChi = @DIACHI
+		WHERE MaKH = @MAKH
+	END
+GO
+
+CREATE PROC XOAKHACHHANG @MAKH INT
+AS
+	BEGIN
+		DELETE FROM TheThanhVien WHERE [MaKH] = @MAKH
+		DELETE FROM KhachHang WHERE MaKH = @MAKH
+	END
+GO
+
+CREATE PROC THEMTHETHANHVIEN @NGAYLAP DATETIME, @NGAYHH DATETIME
+AS
+	BEGIN
+		DECLARE @MAKH INT
+		SET @MAKH = (SELECT TOP 1 MaKH FROM KhachHang ORDER BY MaKH DESC)
+		IF NOT EXISTS (SELECT MaKH FROM TheThanhVien WHERE MaKH = @MAKH)
+			BEGIN
+				INSERT TheThanhVien([MaKH], [NgayLap], [NgayHetHan])
+			VALUES (@MAKH, @NGAYLAP, @NGAYHH)
+			END
+		ELSE
+			ROLLBACK TRANSACTION
+	END
+GO
+
+CREATE PROC XOATHETHANHVIEN @MAKH INT
+AS
+	BEGIN
+		DELETE TheThanhVien
+		WHERE MaKH = @MAKH
+	END
+GO
+
+CREATE PROC TAITAOTHE @MAKH INT, @NGAYLAP DATETIME, @NGAYHH DATETIME
+AS
+	BEGIN
+		EXEC XOATHETHANHVIEN @MAKH
+		INSERT TheThanhVien([MaKH], [NgayLap], [NgayHetHan])
+		VALUES (@MAKH, @NGAYLAP, @NGAYHH)
+	END
+GO 
+
+CREATE PROC THEMTAIKHOAN @MATKHAU VARCHAR(15), @LOAITK TINYINT
+AS
+	BEGIN
+		DECLARE @MANV INT
+		SET @MANV = (SELECT TOP 1 MaNV FROM NhanVien ORDER BY MaNV DESC)
+		INSERT TaiKhoan VALUES (@MANV, @MATKHAU, @LOAITK)
+	END
+GO
+
+CREATE PROC CAPNHATTAIKHOAN @MATK INT, @MATKHAU_M VARCHAR(15)
+AS
+	BEGIN
+		UPDATE TaiKhoan
+		SET MatKhau = @MATKHAU_M
+		WHERE MaNV = @MATK
+	END
+GO
+
+EXEC THEMNHANVIEN N'PHẠM QUAN TÚ', 1, '0358434915', N'Nhóm trưởng'
+GO
+
+EXEC THEMTAIKHOAN '19482831', 1
+
+EXEC THEMNHANVIEN N'PHẠM QUANG MINH', 1, '0123456', N'Đồng sáng lập'
+GO
+
+EXEC THEMTAIKHOAN '17035151', 1
+GO

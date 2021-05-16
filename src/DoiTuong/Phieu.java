@@ -3,20 +3,23 @@ package DoiTuong;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Objects;
 
 public abstract class Phieu {
     private int maPhieu = 0;
     private int maThe = 0;
     private int maNV = 0;
-    private ArrayList<BangDia> dsBangDia = new ArrayList<BangDia>();
-    private LocalDate ngayLap = LocalDate.now();
+    private int maBD = 0;
+    private int soLuong = 0;
+    private Date ngayLap = new Date();
 
-    public Phieu(int maPhieu, int maThe, int maNV, ArrayList<BangDia> dsBangDia, LocalDate ngayLap) {
+    public Phieu(int maPhieu, int maThe, int maNV, int maBD, int soLuong, Date ngayLap) {
         this.maPhieu = maPhieu;
         this.maThe = maThe;
         this.maNV = maNV;
-        this.dsBangDia = dsBangDia;
+        this.maBD = maBD;
+        this.soLuong = soLuong;
         this.ngayLap = ngayLap;
     }
 
@@ -44,38 +47,39 @@ public abstract class Phieu {
         this.maNV = maNV;
     }
 
-    public ArrayList<BangDia> getDsBangDia() {
-        return dsBangDia;
+    public int getMaBD() {
+        return maBD;
     }
 
-    public void setDsBangDia(ArrayList<BangDia> dsBangDia) {
-        this.dsBangDia = dsBangDia;
+    public void setMaBD(int maBD) {
+        this.maBD = maBD;
     }
 
-    public LocalDate getNgayLap() {
+    public Date getNgayLap() {
         return ngayLap;
     }
 
-    public void setNgayLap(LocalDate ngayLap) {
+    public void setNgayLap(Date ngayLap) {
         this.ngayLap = ngayLap;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Phieu)) return false;
-        Phieu phieu = (Phieu) o;
-        return Objects.equals(getMaPhieu(), phieu.getMaPhieu());
+    public int getSoLuong() {
+        return soLuong;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getMaPhieu());
+    public void setSoLuong(int soLuong) {
+        this.soLuong = soLuong;
     }
 
     @Override
     public String toString() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/YYYY");
-        return maPhieu + ";" + maThe + ";" + maNV + ";" + dsBangDia + ";" + dtf.format(ngayLap);
+        return "Phieu{" +
+                "maPhieu=" + maPhieu +
+                ", maThe=" + maThe +
+                ", maNV=" + maNV +
+                ", maBD=" + maBD +
+                ", soLuong=" + soLuong +
+                ", ngayLap=" + ngayLap +
+                '}';
     }
 }

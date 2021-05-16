@@ -112,19 +112,6 @@ public class BangDia {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BangDia)) return false;
-        BangDia bangDia = (BangDia) o;
-        return getMaBD() == bangDia.getMaBD();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getMaBD());
-    }
-
-    @Override
     public String toString() {
         if (tinhTrang == true)
             return maBD + ";" + tenBD + ";" + theLoai + ";" + "OK" + ";"

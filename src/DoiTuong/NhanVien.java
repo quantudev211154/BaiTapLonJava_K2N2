@@ -7,7 +7,7 @@ public class NhanVien extends Nguoi {
         super(ID);
     }
 
-    public NhanVien(int ID, String ten, boolean gioiTinh, String soDT, String moTa) {
+    public NhanVien(int ID, String ten, int gioiTinh, String soDT, String moTa) {
         super(ID, ten, gioiTinh, soDT);
         this.moTa = moTa;
     }
