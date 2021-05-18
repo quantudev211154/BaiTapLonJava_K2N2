@@ -578,6 +578,97 @@ public class KetNoiToiCoSoDuLieu {
         return doanhThu;
     }
 
+//    Thao tac lien quan den cac thong ke
+    public ArrayList<Integer> xemTop10DiaDangBanChay(){
+        ArrayList<Integer> dsMaDiaChay = new ArrayList<>();
+        System.out.println("Tiến hành xem top 10 đĩa đang bán chạy");
+        int maDia = 0;
+        String cauLenhDoc = "SELECT * FROM XEMDIABANCHAY";
+        try {
+            PreparedStatement ps = conn.prepareStatement(cauLenhDoc);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                maDia = rs.getInt(1);
+                dsMaDiaChay.add(maDia);
+            }
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return dsMaDiaChay;
+    }
+
+    public ArrayList<Integer> xemTop10DiaBanE(){
+        ArrayList<Integer> dsDiaE = new ArrayList<>();
+        System.out.println("Tiến hành xem top 10 đĩa đang ế");
+        int maDia = 0;
+        String cauLenhDoc = "SELECT * FROM XEMDIAEAM";
+        try {
+            PreparedStatement ps = conn.prepareStatement(cauLenhDoc);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                maDia = rs.getInt(1);
+                dsDiaE.add(maDia);
+            }
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return dsDiaE;
+    }
+
+    public ArrayList<Integer> xemTop10KhachTreTraDia(){
+        ArrayList<Integer> dsMaKhach = new ArrayList<>();
+        System.out.println("Tiến hành xem top 10 khách trả đĩa chậm");
+        int maKhach = 0;
+        String cauLenhDoc = "SELECT * FROM XEMDANHSACHKHACHTRADIATRE";
+        try {
+            PreparedStatement ps = conn.prepareStatement(cauLenhDoc);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                maKhach = rs.getInt(1);
+                dsMaKhach.add(maKhach);
+            }
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return dsMaKhach;
+    }
+
+    public ArrayList<String> xemTop2NhanVienNangSuat(){
+        ArrayList<String> dsNV = new ArrayList<>();
+        System.out.println("Tiến hành xem top 2 nhân viên năng suất");
+        String tenKhach = "";
+        String cauLenhDoc = "SELECT * FROM XEMNHANVIENBANNHIEUNHAT";
+        try {
+            PreparedStatement ps = conn.prepareStatement(cauLenhDoc);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                tenKhach = rs.getString(1);
+                dsNV.add(tenKhach);
+            }
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return dsNV;
+    }
+
+    public ArrayList<String> xemTop10DiaCoGiaThueRe(){
+        ArrayList<String> dsMaDia = new ArrayList<>();
+        System.out.println("Tiến hành xem top 10 đĩa có giá thuê rẻ");
+        String tenDia = "";
+        String cauLenhDoc = "SELECT * FROM TOP10DIADETIEPCAN";
+        try {
+            PreparedStatement ps = conn.prepareStatement(cauLenhDoc);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                tenDia = rs.getString(1);
+                dsMaDia.add(tenDia);
+            }
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return dsMaDia;
+    }
+
 //    public static void main(String[] args) throws SQLException {
 //        KetNoiToiCoSoDuLieu kn = new KetNoiToiCoSoDuLieu();
 //        ArrayList<TaiKhoan> tk = kn.docDuLieuTaiKhoan();

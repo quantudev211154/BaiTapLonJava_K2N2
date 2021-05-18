@@ -1,6 +1,8 @@
 package GiaoDien.GiaoDienChinh;
 
-public class KhoiDongChuongTrinh {
+import javax.swing.*;
+
+public class KhoiDongChuongTrinh extends JFrame {
     public static void main(String[] args) {
         new GiaoDienDangNhap();
     }

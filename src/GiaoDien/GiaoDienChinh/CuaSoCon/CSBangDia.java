@@ -7,6 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.regex.Pattern;
 
 public class CSBangDia extends JFrame implements ActionListener {
     public JLabel lbTenBD, lbTheLoai, lbHangSX, lbGhiChu, lbSoLuong, lbDonGia, lbGiaThue;
@@ -83,6 +86,25 @@ public class CSBangDia extends JFrame implements ActionListener {
         lbGiaThue.setPreferredSize(kichThuocLabel);
         pGiaThue.add(txtGiaThue = new JTextField());
         txtGiaThue.setPreferredSize(kichThuocTextField);
+        txtGiaThue.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER){
+                    BangDia bd = taoDoiTuongTuTXT();
+                    if (bd != null){
+                        GiaoDienLon.themBangDia(bd);
+                        txtTenBD.setText("");
+                        txtTheLoai.setText("");
+                        txtHangSX.setText("");
+                        txtGhiChu.setText("");
+                        txtSoLuong.setText("");
+                        txtDonGia.setText("");
+                        txtGiaThue.setText("");
+                        txtTenBD.requestFocus();
+                    }
+                }
+            }
+        });
         hopChua.add(pGiaThue);
 //        Cac JButton
         hopChua.add(btnThemDia = new JButton("Thêm đĩa"));

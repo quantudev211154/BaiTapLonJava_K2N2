@@ -6,10 +6,14 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.*;
 
-public class CSKhachHang extends JFrame implements ActionListener {
+public class CSKhachHang extends JFrame implements ActionListener, danhSachRegex{
     public JLabel lbltenkh,lblgioitinh,lblsdtkh,lbldiachi,lblcmnd;
     public static JTextField txttenkh,txtsdtkh,txtdiachi,txtcmnd;
     public static JComboBox combobox;
@@ -53,6 +57,18 @@ public class CSKhachHang extends JFrame implements ActionListener {
         txtcmnd = new JTextField();
         txtcmnd.setBounds(10, 300, chieuRong, 30);
         txtcmnd.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        txtcmnd.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER){
+                    KhachHang kh = layDuLieuTuTXT();
+                    if (kh != null){
+                        GiaoDienLon.themKhachHang(kh);
+                        dispose();
+                    }
+                }
+            }
+        });
         btnthemkh = new JButton("Thêm KH");
         btnthemkh.setBounds(10, 350, 145, 45);
         btncapnhatkh = new JButton("Cập nhật KH");
@@ -103,6 +119,21 @@ public class CSKhachHang extends JFrame implements ActionListener {
             String soDT = txtsdtkh.getText().trim();
             String tenKH = txttenkh.getText().trim();
             int gioiTinh = (combobox.getSelectedIndex() == 0) ? 1 : 0;
+//          Matcher
+            Matcher mSoDT = pSoDT.matcher(soDT);
+            Matcher mSoCMND = pSoCMDN.matcher(soCMND);
+            if (!mSoCMND.matches()){
+                JOptionPane.showMessageDialog(this, "Định dạng số CMND không hợp lệ");
+                txtcmnd.selectAll();
+                txtcmnd.requestFocus();
+                return null;
+            }
+            if (!mSoDT.matches()){
+                JOptionPane.showMessageDialog(this, "Định dạng số điện thoại không hợp lệ");
+                txtsdtkh.selectAll();
+                txtsdtkh.requestFocus();
+                return null;
+            }
             KhachHang kh = new KhachHang(1, tenKH, gioiTinh, soDT, 1, diaChi, soCMND);
             return kh;
         }
@@ -128,8 +159,6 @@ public class CSKhachHang extends JFrame implements ActionListener {
                 GiaoDienLon.themKhachHang(kh);
                 dispose();
             }
-            else
-                JOptionPane.showMessageDialog(this, "Các thông tin khách hàng chưa được điền đủ");
         }
         if (o.equals(btncapnhatkh)){
             KhachHang kh = layDuLieuTuTXT();

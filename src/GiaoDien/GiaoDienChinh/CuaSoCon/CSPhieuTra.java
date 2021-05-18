@@ -9,6 +9,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.Date;
 
 public class CSPhieuTra extends JFrame implements ActionListener {
@@ -50,6 +52,21 @@ public class CSPhieuTra extends JFrame implements ActionListener {
         txtSlTra = new JTextField();
         txtSlTra.setBounds(10, 240, 350, 30);
         txtSlTra.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        txtSlTra.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER){
+                    PhieuTra p = layDuLieuTuTXT();
+                    if (p != null){
+                        GiaoDienLon.themPhieuTra(p);
+                        txtMaPhieuThue.setText("");
+                        txtMaDiaTra.setText("");
+                        txtSlTra.setText("");
+                        txtMaPhieuThue.requestFocus();
+                    }
+                }
+            }
+        });
 
         lblTinhTrangDia = new JLabel("Tình trạng đĩa");
         lblTinhTrangDia.setFont(ft);

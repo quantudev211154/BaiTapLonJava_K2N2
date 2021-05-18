@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class GiaoDienDangNhap extends JFrame implements ActionListener {
     private JPanel khungChua;
     private JLabel lbTieuDe, lbTenDangNhap, lbMatKhau;
-    private JTextField txtTenDangNhap;
+    private static JTextField txtTenDangNhap;
     private JPasswordField txtMatKhau;
     private JButton btnDangNhap;
     private Dimension kichThuocLabel = new Dimension(200, 35);
@@ -23,6 +23,7 @@ public class GiaoDienDangNhap extends JFrame implements ActionListener {
     private KetNoiToiCoSoDuLieu kn;
     private ArrayList<TaiKhoan> dsTaiKhoan;
     private int soLanDangNhapHut = 0;
+    private final Color mauBTN = new Color(46, 82, 102);
 
     public GiaoDienDangNhap(){
         setTitle("Đăng nhập");
@@ -109,9 +110,11 @@ public class GiaoDienDangNhap extends JFrame implements ActionListener {
     public JPanel xacNhanDangNhap(){
         JPanel pXacNhan = new JPanel();
         pXacNhan.add(btnDangNhap = new JButton("Đăng nhập"));
-        btnDangNhap.setPreferredSize(new Dimension(150, 45));
-        btnDangNhap.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 18));
+        btnDangNhap.setPreferredSize(new Dimension(200, 50));
+        btnDangNhap.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
         btnDangNhap.addActionListener(this);
+        btnDangNhap.setBackground(mauBTN);
+        btnDangNhap.setForeground(Color.WHITE);
         pXacNhan.setPreferredSize(new Dimension(550, 10));
         return pXacNhan;
     }
@@ -131,21 +134,26 @@ public class GiaoDienDangNhap extends JFrame implements ActionListener {
         return false;
     }
 
+    public static int layMaNV(){
+        return Integer.parseInt(txtTenDangNhap.getText().trim());
+    }
+
     public void kiemTraDangNhap(){
         if (!txtTenDangNhap.getText().trim().equals("")
                 && !txtMatKhau.getText().trim().equals("")){
             int maNV = 0;
-            String matKhau = "";
             try{
                 maNV = Integer.parseInt(txtTenDangNhap.getText().trim());
             } catch (Exception ex){
                 JOptionPane.showMessageDialog(this, "Mã nhân viên không đúng định dạng");
             }
-            matKhau = txtMatKhau.getText().trim();
-            if (kiemTraTTDangNhap(maNV, matKhau) == true){
+            String passThat = "";
+            char[] mkTam = txtMatKhau.getPassword();
+            for (int i = 0; i < mkTam.length; ++i)
+                passThat += mkTam[i];
+            if (kiemTraTTDangNhap(maNV, passThat) == true){
                 GiaoDienLon gd = new GiaoDienLon();
                 gd.setVisible(true);
-                gd.layMaNguoiDung(maNV);
                 dispose();
             }
             else{

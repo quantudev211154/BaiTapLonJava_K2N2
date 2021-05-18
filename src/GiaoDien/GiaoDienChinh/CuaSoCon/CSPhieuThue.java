@@ -7,6 +7,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.Date;
 
 import javax.swing.*;
@@ -48,6 +50,21 @@ public class CSPhieuThue extends JFrame implements ActionListener {
         txtSongaymuon = new JTextField();
         txtSongaymuon.setBounds(10, 280, 350, 40);
         txtSongaymuon.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        txtSongaymuon.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER){
+                    PhieuThue p = layDuLieuTuTXT();
+                    if (p != null){
+                        GiaoDienLon.themPhieuThue(p);
+                        txtMadiamuon.setText("");
+                        txtSlDia.setText("");
+                        txtSongaymuon.setText("");
+                        txtMadiamuon.requestFocus();
+                    }
+                }
+            }
+        });
 
         btnTaoPhieu = new JButton("Tạo phiếu thuê");
         btnTaoPhieu.setBounds(100, 350, 150, 50);
@@ -115,6 +132,7 @@ public class CSPhieuThue extends JFrame implements ActionListener {
             if (p != null){
                 GiaoDienLon.themPhieuThue(p);
                 txtMadiamuon.setText("");
+                txtSlDia.setText("");
                 txtSongaymuon.setText("");
                 txtMadiamuon.requestFocus();
             }

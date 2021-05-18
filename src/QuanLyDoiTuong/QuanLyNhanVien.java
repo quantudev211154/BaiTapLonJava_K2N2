@@ -24,4 +24,11 @@ public class QuanLyNhanVien {
         return kn.xoaNhanVien(maNV);
     }
 
+    public int timNhanVien(int maNV){
+        for (NhanVien nv : dsNhanVien)
+            if (nv.getID() == maNV)
+                return dsNhanVien.indexOf(nv);
+        return -1;
+    }
+
 }

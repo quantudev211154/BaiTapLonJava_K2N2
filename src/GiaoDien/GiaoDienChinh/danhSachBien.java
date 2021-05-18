@@ -5,6 +5,8 @@ import MoHinhDoiTuong.MoHinhBangDia;
 import QuanLyDoiTuong.QuanLyBangDia;
 
 import javax.swing.*;
+import java.awt.*;
+import java.util.regex.Pattern;
 
 public interface danhSachBien {
     /**
@@ -13,12 +15,12 @@ public interface danhSachBien {
     public final int chieuCaoGiaoDien = 745,
                      chieuCaoMenuBar = 35,
                      chieuCaoHopCongCu = 70,
-                     chieuCaoHopDuLieu = 545,
-                     chieuCaoHopTTDuLieu = 50;
+                     chieuCaoHopDuLieu = 595;
     public final int chieuRongGiaoDien = 1370, chieuRongJMenu = 150,
                     chieuRongBangDuLieu = chieuRongGiaoDien - 20;
     public final int chieuCaoHangTrongBang = 30;
-
+    public final Dimension kichThuocBTNThongKe = new Dimension(280, 110);
+    public final Font fontBtnThongKe = new Font("Times New Roman", Font.PLAIN, 20);
 
     /**
      * JMenuBar
@@ -34,17 +36,18 @@ public interface danhSachBien {
     /**
      * - Các JMenuItems
      */
-    public JMenuItem miBangDia = new JMenuItem("           Băng đĩa"),
-                    miPhieuThue = new JMenuItem("           Phiếu thuê"),
-                    miPhieuTra = new JMenuItem("            Phiếu trả"),
-                    miKhachHang = new JMenuItem("           Khách hàng"),
-                    miTheThanhVien = new JMenuItem("          Thẻ thành viên"),
-                    miNhanVien = new JMenuItem("               Nhân viên"),
-                    miTaiKhoan = new JMenuItem("              DS Tài khoản"),
+    public JMenuItem miBangDia = new JMenuItem("         Băng đĩa"),
+                    miPhieuThue = new JMenuItem("         Phiếu thuê"),
+                    miPhieuTra = new JMenuItem("          Phiếu trả"),
+                    miKhachHang = new JMenuItem("          Khách hàng"),
+                    miTheThanhVien = new JMenuItem("         Thẻ thành viên"),
+                    miNhanVien = new JMenuItem("             Nhân viên"),
+                    miTaiKhoan = new JMenuItem("           DS Tài khoản"),
                     miDoanhThuTrongNgay = new JMenuItem("Doanh thu trong ngày"),
                     miChiTietDoanhThu = new JMenuItem("Chi tiết doanh thu"),
                     miNguoiDung = new JMenuItem("NV đang hoạt động"),
-                    miDangXuat = new JMenuItem("Đăng xuất");
+                    miDangXuat = new JMenuItem("Đăng xuất"),
+                    miThongKe = new JMenuItem("            Thống kê");
 
     /**
      * - Danh sách các biểu tượng Thêm, Sửa, Xóa, Tìm kiếm
@@ -63,6 +66,12 @@ public interface danhSachBien {
     public ImageIcon btThemTaiKhoan = new ImageIcon("D:\\IUH - Uni\\IUH - Details\\Tearm II\\Java - EOP\\JavaProject\\src\\GiaoDien\\GiaoDienChinh\\BieuTuong\\bieuTuongThemTaiKhoan.png");
     public ImageIcon btThemNhanVien = new ImageIcon("D:\\IUH - Uni\\IUH - Details\\Tearm II\\Java - EOP\\JavaProject\\src\\GiaoDien\\GiaoDienChinh\\BieuTuong\\bieutuongThemNhanVien.png");
     public ImageIcon btXemPhieuChuaTra = new ImageIcon("D:\\IUH - Uni\\IUH - Details\\Tearm II\\Java - EOP\\JavaProject\\src\\GiaoDien\\GiaoDienChinh\\BieuTuong\\btXemPhieuChuaTra.png");
+    public ImageIcon btThongKeDuLieu = new ImageIcon("D:\\IUH - Uni\\IUH - Details\\Tearm II\\Java - EOP\\JavaProject\\src\\GiaoDien\\GiaoDienChinh\\BieuTuong\\btThongKeSL.png");
+    public ImageIcon btBangDia = new ImageIcon("D:\\IUH - Uni\\IUH - Details\\Tearm II\\Java - EOP\\JavaProject\\src\\GiaoDien\\GiaoDienChinh\\BieuTuong\\btBangDia.png");
+    public ImageIcon btBangDiaE = new ImageIcon("D:\\IUH - Uni\\IUH - Details\\Tearm II\\Java - EOP\\JavaProject\\src\\GiaoDien\\GiaoDienChinh\\BieuTuong\\btDiaE.png");
+    public ImageIcon btKhachTreDia = new ImageIcon("D:\\IUH - Uni\\IUH - Details\\Tearm II\\Java - EOP\\JavaProject\\src\\GiaoDien\\GiaoDienChinh\\BieuTuong\\btKhachTreDia.png");
+    public ImageIcon btNVNangSuat = new ImageIcon("D:\\IUH - Uni\\IUH - Details\\Tearm II\\Java - EOP\\JavaProject\\src\\GiaoDien\\GiaoDienChinh\\BieuTuong\\btNVNangSuat.png");
+    public ImageIcon btDiaRe = new ImageIcon("D:\\IUH - Uni\\IUH - Details\\Tearm II\\Java - EOP\\JavaProject\\src\\GiaoDien\\GiaoDienChinh\\BieuTuong\\btDiaRe.png");
 
 
     /**
@@ -118,7 +127,6 @@ public interface danhSachBien {
      * - Các JButton ở hộp Công cụ của đối tượng TaiKhoan
      */
     public JButton btnThemTaiKhoan = new JButton("Tạo tài khoản NV", btThemTaiKhoan),
-            btnXoaTaiKhoan = new JButton("Xóa tài khoản", bieuTuongXoa),
             btnCapNhatTaiKhoan = new JButton("Đổi mật khẩu", bieuTuongCapNhat),
             btnTimTaiKhoan = new JButton("Tìm tài khoản", bieuTuongTim);
 
@@ -129,6 +137,15 @@ public interface danhSachBien {
     public JButton btnXemDoanhThuTheoThang = new JButton("Xem doanh thu theo tháng", bieuTuongViThang);
     public JButton btnTimGiaoDich = new JButton("Tìm giao dịch", bieuTuongTim);
 
+    /**
+     * - Các JButton ở hộp Thống kê
+     */
+    public JButton btnThongKeDuLieu = new JButton("Thống kê dữ liệu", btThongKeDuLieu);
+    public JButton btnXemDiaBanChay = new JButton("Top 10 đĩa bán chạy", btBangDia);
+    public JButton btnXemDiaBanE = new JButton("Top 10 đĩa ế", btBangDiaE);
+    public JButton btnXemKhachTreDia = new JButton("Top 10 khách xù đĩa", btKhachTreDia);
+    public JButton btnXemNhanVienGioi = new JButton("Top 2 nhân viên giỏi", btNVNangSuat);
+    public JButton btnXemDiaRe = new JButton("Top 10 đĩa dễ thuê", btDiaRe);
     /**
      * - Các JTextFiedld
      */
@@ -164,11 +181,6 @@ public interface danhSachBien {
     public JScrollPane scrPaneTheTV = new JScrollPane(tbTheTV);
     public JScrollPane scrPanePhieuThue = new JScrollPane(tbPhieuThue);
     public JScrollPane scrPanePhieuTra = new JScrollPane(tbPhieuTra);
-
-    /**
-     * JLabel dùng để hiển thị thông tin dữ liệu
-     */
-    public JLabel lbThongTinDuLieu = new JLabel(" ");
 
 }
 

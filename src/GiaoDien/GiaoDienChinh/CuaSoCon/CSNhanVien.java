@@ -7,8 +7,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.regex.Matcher;
 
-public class CSNhanVien extends JFrame implements ActionListener {
+public class CSNhanVien extends JFrame implements ActionListener, danhSachRegex {
     public JLabel lblten,lblgioitinh,lblsdt,lblmota;
     public static JTextField txtten,txtsdt;
     public static JComboBox combobox;
@@ -42,6 +45,18 @@ public class CSNhanVien extends JFrame implements ActionListener {
         txtsdt = new JTextField();
         txtsdt.setBounds(10,165,chieuRong,30);
         txtsdt.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        txtsdt.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER){
+                    NhanVien nv = layDuLieuTuTXT();
+                    if (nv != null){
+                        GiaoDienLon.themNhanVien(nv);
+                        dispose();
+                    }
+                }
+            }
+        });
         lblmota = new JLabel("Mô tả:");
         lblmota.setBounds(10,200,chieuRong,30);
         lblmota.setFont(ft);
@@ -94,6 +109,14 @@ public class CSNhanVien extends JFrame implements ActionListener {
             int gioiTinh = (combobox.getSelectedIndex() == 0) ? 1 : 2;
             String moTa = txtmota.getText().trim();
             String soDT = txtsdt.getText().trim();
+//            Matcher
+            Matcher mSoDT = pSoDT.matcher(soDT);
+            if (!mSoDT.matches()){
+                JOptionPane.showMessageDialog(this, "Định dạng số điện thoại không hợp lệ");
+                txtsdt.selectAll();
+                txtsdt.requestFocus();
+                return null;
+            }
             NhanVien nv = new NhanVien(1, tenNV, gioiTinh, soDT, moTa);
             return nv;
         }

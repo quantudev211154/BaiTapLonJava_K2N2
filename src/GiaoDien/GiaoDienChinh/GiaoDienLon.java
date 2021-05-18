@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener {
-    public static int maNhanVienDangDung = 1;
-    public JPanel pnKhungChua, pnHopCongCu, pnHopDuLieu, pnHopThongTinDuLieu;
+    public static int maNhanVienDangDung = 0;
+    public JPanel pnKhungChua, pnHopCongCu, pnHopDuLieu;
     public static KetNoiToiCoSoDuLieu kn;
     public static MoHinhBangDia mhBangDia;
     public static MoHinhNhanVien mhNhanVien;
@@ -37,6 +37,8 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
             setSize(chieuRongGiaoDien, chieuCaoGiaoDien);
             dungGiaoDien();
             kn = new KetNoiToiCoSoDuLieu();
+            maNhanVienDangDung = GiaoDienDangNhap.layMaNV();
+            System.out.println("Ma nhan vien dang dung: " + maNhanVienDangDung);
             phanQuyenNguoiDung(maNhanVienDangDung);
             setResizable(false);
             setLocationRelativeTo(null);
@@ -54,8 +56,6 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
         hopCongCuBangDia(pnHopCongCu);
         pnKhungChua.add(pnHopDuLieu = new JPanel());
         hopDuLieuBangDia(pnHopDuLieu);
-        pnKhungChua.add(pnHopThongTinDuLieu = new JPanel());
-        hopTTDuLieuBangDia(pnHopThongTinDuLieu);
         themHanhDongChoCacNut();
         add(pnKhungChua);
     }
@@ -68,20 +68,21 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
         thanhMenu.add(miTheThanhVien);
         thanhMenu.add(miNhanVien);
         thanhMenu.add(miTaiKhoan);
+        thanhMenu.add(miThongKe);
 //        JMenu Doanh Thu
         thanhMenu.add(mnDoanhThu);
-        mnDoanhThu.setPreferredSize(new Dimension(chieuRongJMenu, chieuCaoMenuBar));
+        mnDoanhThu.setPreferredSize(new Dimension(chieuRongJMenu - 10, chieuCaoMenuBar));
         mnDoanhThu.add(miDoanhThuTrongNgay);
-        miDoanhThuTrongNgay.setPreferredSize(new Dimension(chieuRongJMenu - 2, chieuCaoMenuBar));
+        miDoanhThuTrongNgay.setPreferredSize(new Dimension(chieuRongJMenu - 12, chieuCaoMenuBar));
         mnDoanhThu.add(miChiTietDoanhThu);
-        miChiTietDoanhThu.setPreferredSize(new Dimension(chieuRongJMenu - 2, chieuCaoMenuBar));
+        miChiTietDoanhThu.setPreferredSize(new Dimension(chieuRongJMenu - 12, chieuCaoMenuBar));
 //        JMenu Nang Cao
         thanhMenu.add(mnNangCao);
-        mnNangCao.setPreferredSize(new Dimension(chieuRongJMenu, chieuCaoMenuBar));
+        mnNangCao.setPreferredSize(new Dimension(chieuRongJMenu - 10, chieuCaoMenuBar));
         mnNangCao.add(miNguoiDung);
-        miNguoiDung.setPreferredSize(new Dimension(chieuRongJMenu - 9, chieuCaoMenuBar));
+        miNguoiDung.setPreferredSize(new Dimension(chieuRongJMenu - 13, chieuCaoMenuBar));
         mnNangCao.add(miDangXuat);
-        miDangXuat.setPreferredSize(new Dimension(chieuRongJMenu - 9, chieuCaoMenuBar));
+        miDangXuat.setPreferredSize(new Dimension(chieuRongJMenu - 13, chieuCaoMenuBar));
         thanhMenu.setPreferredSize(new Dimension( chieuRongGiaoDien,chieuCaoMenuBar));
 //        Them hanh dong cho cac MenuItems
         miBangDia.addActionListener(this);
@@ -95,11 +96,8 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
         miChiTietDoanhThu.addActionListener(this);
         miNguoiDung.addActionListener(this);
         miDangXuat.addActionListener(this);
+        miThongKe.addActionListener(this);
         return thanhMenu;
-    }
-
-    public void layMaNguoiDung(int maNguoiDung){
-        maNhanVienDangDung = maNguoiDung;
     }
 
     public void phanQuyenNguoiDung(int maNV){
@@ -153,14 +151,18 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
         hopCCBangDia.add(Box.createHorizontalStrut(20));
         hopCCBangDia.add(txtTimBangDia);
         tuyChinhJTextField(txtTimBangDia, 300, 50, "Nhập mã băng đĩa cần tìm", Color.black);
+        txtTimBangDia.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    timDia();
+                }
+            }
+        });
         hopCCBangDia.add(Box.createHorizontalStrut(20));
         hopCCBangDia.add(btnTimDia);
         hopCCBangDia.add(Box.createHorizontalStrut(20));
         tuyChinhJPanel(hopCCBangDia, chieuRongGiaoDien, chieuCaoHopCongCu, Color.red);
-        btnThemDia.addActionListener(this);
-        btnXoaDia.addActionListener(this);
-        btnCapNhatDia.addActionListener(this);
-        btnTimDia.addActionListener(this);
     }
 
     /**
@@ -177,20 +179,10 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
         tuyChinhJPanel(hopDuLieuDia, chieuRongBangDuLieu, chieuCaoHopDuLieu, Color.blue);
     }
 
-    /**
-     * - Dùng để load lên khi chạy giao diện
-     * @return: Hộp thông tin dữ liệu băng đĩa
-     */
-    public void hopTTDuLieuBangDia(JPanel hopTTDL) throws SQLException {
-        hopTTDL.add(lbThongTinDuLieu);
-        KetNoiToiCoSoDuLieu ketNoi = new KetNoiToiCoSoDuLieu();
-        lbThongTinDuLieu.setText("Hệ thống hiện đang lưu trữ: " + new QuanLyBangDia(ketNoi).getDsBangDia().size() + " băng đĩa");
-        lbThongTinDuLieu.setFont(new Font("Times New Roman", Font.BOLD, 20));
-        lbThongTinDuLieu.setForeground(Color.blue);
-        tuyChinhJPanel(hopTTDL, chieuRongGiaoDien, chieuCaoHopTTDuLieu, Color.cyan);
-    }
-
     public void themHanhDongChoCacNut(){
+        btnThemDia.addActionListener(this);
+        btnXoaDia.addActionListener(this);
+        btnCapNhatDia.addActionListener(this);
         btnTimDia.addActionListener(this);
         btnTaoPhieuThue.addActionListener(this);
         btnXoaPhieuThue.addActionListener(this);
@@ -218,6 +210,12 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
         btnThemTaiKhoan.addActionListener(this);
         btnCapNhatTaiKhoan.addActionListener(this);
         btnTimTaiKhoan.addActionListener(this);
+        btnThongKeDuLieu.addActionListener(this);
+        btnXemDiaBanChay.addActionListener(this);
+        btnXemDiaBanE.addActionListener(this);
+        btnXemKhachTreDia.addActionListener(this);
+        btnXemNhanVienGioi.addActionListener(this);
+        btnXemDiaRe.addActionListener(this);
     }
 
     @Override
@@ -226,6 +224,7 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
         if (o.equals(miBangDia)){
             pnHopCongCu.removeAll();
             pnHopCongCu.repaint();
+            pnHopCongCu.setPreferredSize(new Dimension(chieuRongGiaoDien, chieuCaoHopCongCu));
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(btnThemDia);
             pnHopCongCu.add(Box.createHorizontalStrut(20));
@@ -235,13 +234,23 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(txtTimBangDia);
             tuyChinhJTextField(txtTimBangDia, 200, 50, "Nhập mã băng đĩa cần tìm", Color.black);
+            txtTimBangDia.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER){
+                        timDia();
+                    }
+                }
+            });
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(btnTimDia);
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.revalidate();
-//            Hop thong tin du lieu
+//            Hop du lieu
             pnHopDuLieu.removeAll();
             pnHopDuLieu.repaint();
+            pnHopDuLieu.setLayout(new FlowLayout());
+            pnHopDuLieu.setPreferredSize(new Dimension(chieuRongGiaoDien, chieuCaoHopDuLieu));
             capNhatDuLieuBangDia();
             scrPaneBangDia.setPreferredSize(new Dimension(chieuRongBangDuLieu, chieuCaoHopDuLieu));
             pnHopDuLieu.add(scrPaneBangDia);
@@ -250,6 +259,7 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
         if (o.equals(miPhieuThue)){
             pnHopCongCu.removeAll();
             pnHopCongCu.repaint();
+            pnHopCongCu.setPreferredSize(new Dimension(chieuRongGiaoDien, chieuCaoHopCongCu));
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(btnTaoPhieuThue);
             pnHopCongCu.add(Box.createHorizontalStrut(20));
@@ -259,6 +269,13 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(txtTimPhieuThue);
             tuyChinhJTextField(txtTimPhieuThue, 300, 20, "Nhập mã phiếu thuê cần tìm", Color.black);
+            txtTimPhieuThue.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                        timPhieuThue();
+                }
+            });
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(btnTimPhieuThue);
             pnHopCongCu.add(Box.createHorizontalStrut(20));
@@ -266,6 +283,8 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
 //
             pnHopDuLieu.removeAll();
             pnHopDuLieu.repaint();
+            pnHopDuLieu.setLayout(new FlowLayout());
+            pnHopDuLieu.setPreferredSize(new Dimension(chieuRongGiaoDien, chieuCaoHopDuLieu));
             capNhatDuLieuPhieuThue();
             scrPanePhieuThue.setPreferredSize(new Dimension(chieuRongBangDuLieu, chieuCaoHopDuLieu));
             pnHopDuLieu.add(scrPanePhieuThue);
@@ -274,6 +293,7 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
         if (o.equals(btnXemPhieuChuaTra)){
             pnHopDuLieu.removeAll();
             pnHopDuLieu.repaint();
+            pnHopCongCu.setPreferredSize(new Dimension(chieuRongGiaoDien, chieuCaoHopCongCu));
             mhPhieuThue = new MoHinhPhieuThue(kn.docDuLieuPhieuChuaTra());
             tbPhieuThue.setModel(mhPhieuThue);
             tbPhieuThue.setRowHeight(chieuCaoHangTrongBang);
@@ -284,6 +304,7 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
         if (o.equals(miPhieuTra)){
             pnHopCongCu.removeAll();
             pnHopCongCu.repaint();
+            pnHopCongCu.setPreferredSize(new Dimension(chieuRongGiaoDien, chieuCaoHopCongCu));
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(btnTaoPhieuTra);
             pnHopCongCu.add(Box.createHorizontalStrut(20));
@@ -291,6 +312,13 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(txtTimPhieuTra);
             tuyChinhJTextField(txtTimPhieuTra, 300, 20, "Nhập mã phiếu trả cần tìm", Color.black);
+            txtTimPhieuTra.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                        timPhieuTra();
+                }
+            });
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(btnTimPhieuTra);
             pnHopCongCu.add(Box.createHorizontalStrut(20));
@@ -298,6 +326,8 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
 //
             pnHopDuLieu.removeAll();
             pnHopDuLieu.repaint();
+            pnHopDuLieu.setLayout(new FlowLayout());
+            pnHopDuLieu.setPreferredSize(new Dimension(chieuRongGiaoDien, chieuCaoHopDuLieu));
             capNhatDuLieuPhieuTra();
             scrPanePhieuTra.setPreferredSize(new Dimension(chieuRongBangDuLieu, chieuCaoHopDuLieu));
             pnHopDuLieu.add(scrPanePhieuTra);
@@ -306,6 +336,7 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
         if (o.equals(miKhachHang)){
             pnHopCongCu.removeAll();
             pnHopCongCu.repaint();
+            pnHopCongCu.setPreferredSize(new Dimension(chieuRongGiaoDien, chieuCaoHopCongCu));
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(btnThemKhachHang);
             pnHopCongCu.add(Box.createHorizontalStrut(20));
@@ -315,6 +346,13 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(txtTimKhachHang);
             tuyChinhJTextField(txtTimKhachHang, 300, 20, "Nhập mã khách hàng cần tìm", Color.black);
+            txtTimKhachHang.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                        timKhachHang();
+                }
+            });
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(btnTimKhachHang);
             pnHopCongCu.add(Box.createHorizontalStrut(20));
@@ -322,6 +360,8 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
 //
             pnHopDuLieu.removeAll();
             pnHopDuLieu.repaint();
+            pnHopDuLieu.setLayout(new FlowLayout());
+            pnHopDuLieu.setPreferredSize(new Dimension(chieuRongGiaoDien, chieuCaoHopDuLieu));
             capNhatDuLieuKhachHang();
             scrPaneKhachHang.setPreferredSize(new Dimension(chieuRongBangDuLieu, chieuCaoHopDuLieu));
             pnHopDuLieu.add(scrPaneKhachHang);
@@ -330,24 +370,30 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
         if (o.equals(miTheThanhVien)){
             pnHopCongCu.removeAll();
             pnHopCongCu.repaint();
+            pnHopCongCu.setPreferredSize(new Dimension(chieuRongGiaoDien, chieuCaoHopCongCu));
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(btnXoaTheTV);
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(btnCapNhatTheTV);
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(txtTimTheTV);
-            tuyChinhJTextField(txtTimTheTV, 300, 20, "Nhập mã thẻ thành viên cần tìm", Color.black);
+            tuyChinhJTextField(txtTimTheTV, 300, 20, "Nhập mã khách hàng cần tìm thẻ", Color.black);
+            txtTimTheTV.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                        timTheThanhVien();
+                }
+            });
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(btnTimTheTV);
             pnHopCongCu.add(Box.createHorizontalStrut(20));
-            btnThemTheTV.addActionListener(this);
-            btnXoaTheTV.addActionListener(this);
-            btnCapNhatTheTV.addActionListener(this);
-            btnTimTheTV.addActionListener(this);
             pnHopCongCu.revalidate();
 //
             pnHopDuLieu.removeAll();
             pnHopDuLieu.repaint();
+            pnHopDuLieu.setLayout(new FlowLayout());
+            pnHopDuLieu.setPreferredSize(new Dimension(chieuRongGiaoDien, chieuCaoHopDuLieu));
             capNhatDuLieuTheTV();
             scrPaneTheTV.setPreferredSize(new Dimension(chieuRongBangDuLieu, chieuCaoHopDuLieu));
             pnHopDuLieu.add(scrPaneTheTV);
@@ -356,6 +402,7 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
         if (o.equals(miNhanVien)){
             pnHopCongCu.removeAll();
             pnHopCongCu.repaint();
+            pnHopCongCu.setPreferredSize(new Dimension(chieuRongGiaoDien, chieuCaoHopCongCu));
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(btnThemNhanVien);
             pnHopCongCu.add(Box.createHorizontalStrut(20));
@@ -365,6 +412,13 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(txtTimNhanVien);
             tuyChinhJTextField(txtTimNhanVien, 300, 20, "Nhập mã nhân viên cần tìm", Color.black);
+            txtTimNhanVien.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                        timNhanVien();
+                }
+            });
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(btnTimNhanVien);
             pnHopCongCu.add(Box.createHorizontalStrut(20));
@@ -372,6 +426,8 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
 //            Hop Du Lieu Nhan Vien
             pnHopDuLieu.removeAll();
             pnHopDuLieu.repaint();
+            pnHopDuLieu.setLayout(new FlowLayout());
+            pnHopDuLieu.setPreferredSize(new Dimension(chieuRongGiaoDien, chieuCaoHopDuLieu));
             capNhatDuLieuNhanVien();
             scrPaneNhanVien.setPreferredSize(new Dimension(chieuRongBangDuLieu, chieuCaoHopDuLieu));
             pnHopDuLieu.add(scrPaneNhanVien);
@@ -380,11 +436,19 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
         if (o.equals(miTaiKhoan)){
             pnHopCongCu.removeAll();
             pnHopCongCu.repaint();
+            pnHopCongCu.setPreferredSize(new Dimension(chieuRongGiaoDien, chieuCaoHopCongCu));
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(btnCapNhatTaiKhoan);
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(txtTimTaiKhoan);
             tuyChinhJTextField(txtTimTaiKhoan, 300, 20, "Nhập mã tài khoản cần tìm", Color.black);
+            txtTimTaiKhoan.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                        timTaiKhoan();
+                }
+            });
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(btnTimTaiKhoan);
             pnHopCongCu.add(Box.createHorizontalStrut(20));
@@ -392,9 +456,41 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
 //            Hop du lieu tai khoan
             pnHopDuLieu.removeAll();
             pnHopDuLieu.repaint();
+            pnHopDuLieu.setLayout(new FlowLayout());
+            pnHopDuLieu.setPreferredSize(new Dimension(chieuRongGiaoDien, chieuCaoHopDuLieu));
             capNhatDuLieuTaiKhoan();
             scrPaneTaiKhoan.setPreferredSize(new Dimension(chieuRongBangDuLieu, chieuCaoHopDuLieu));
             pnHopDuLieu.add(scrPaneTaiKhoan);
+            pnHopDuLieu.revalidate();
+        }
+        if (o.equals(miThongKe)){
+            pnHopCongCu.removeAll();
+            pnHopCongCu.repaint();
+            pnHopCongCu.revalidate();
+            pnHopCongCu.setPreferredSize(new Dimension(0, 0));
+//
+            pnHopDuLieu.removeAll();
+            pnHopDuLieu.repaint();
+            pnHopDuLieu.setLayout(new FlowLayout(1, 150, 80));
+            pnHopDuLieu.setPreferredSize(new Dimension(chieuRongGiaoDien, (chieuCaoHopDuLieu + chieuCaoHopCongCu)));
+            pnHopDuLieu.add(btnThongKeDuLieu);
+            btnThongKeDuLieu.setFont(fontBtnThongKe);
+            btnThongKeDuLieu.setPreferredSize(kichThuocBTNThongKe);
+            pnHopDuLieu.add(btnXemDiaBanChay);
+            btnXemDiaBanChay.setFont(fontBtnThongKe);
+            btnXemDiaBanChay.setPreferredSize(kichThuocBTNThongKe);
+            pnHopDuLieu.add(btnXemDiaBanE);
+            btnXemDiaBanE.setFont(fontBtnThongKe);
+            btnXemDiaBanE.setPreferredSize(kichThuocBTNThongKe);
+            pnHopDuLieu.add(btnXemKhachTreDia);
+            btnXemKhachTreDia.setFont(fontBtnThongKe);
+            btnXemKhachTreDia.setPreferredSize(kichThuocBTNThongKe);
+            pnHopDuLieu.add(btnXemNhanVienGioi);
+            btnXemNhanVienGioi.setFont(fontBtnThongKe);
+            btnXemNhanVienGioi.setPreferredSize(kichThuocBTNThongKe);
+            pnHopDuLieu.add(btnXemDiaRe);
+            btnXemDiaRe.setFont(fontBtnThongKe);
+            btnXemDiaRe.setPreferredSize(kichThuocBTNThongKe);
             pnHopDuLieu.revalidate();
         }
         if (o.equals(miDoanhThuTrongNgay)){
@@ -410,6 +506,7 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
         if (o.equals(miChiTietDoanhThu)){
             pnHopCongCu.removeAll();
             pnHopCongCu.repaint();
+            pnHopCongCu.setPreferredSize(new Dimension(chieuRongGiaoDien, chieuCaoHopCongCu));
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(btnXemDoanhThuThangHienTai);
             pnHopCongCu.add(Box.createHorizontalStrut(20));
@@ -417,6 +514,13 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(txtTimGiaoDich);
             tuyChinhJTextField(txtTimGiaoDich, 300, 20, "Nhập mã giao dịch cần tìm", Color.black);
+            txtTimGiaoDich.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                        timDoanhThu();
+                }
+            });
             pnHopCongCu.add(Box.createHorizontalStrut(20));
             pnHopCongCu.add(btnTimGiaoDich);
             pnHopCongCu.add(Box.createHorizontalStrut(20));
@@ -425,6 +529,8 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
 //            Hop du lieu doanh thu
             pnHopDuLieu.removeAll();
             pnHopDuLieu.repaint();
+            pnHopDuLieu.setLayout(new FlowLayout());
+            pnHopDuLieu.setPreferredSize(new Dimension(chieuRongGiaoDien, chieuCaoHopDuLieu));
             capNhatDuLieuDoanhThu();
             scrPaneDoanhThu.setPreferredSize(new Dimension(chieuRongBangDuLieu, chieuCaoHopDuLieu));
             pnHopDuLieu.add(scrPaneDoanhThu);
@@ -603,6 +709,121 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
             else
                 JOptionPane.showMessageDialog(this, "Hãy chọn phiếu cần xóa");
         }
+        if (o.equals(btnTimDia)){
+            timDia();
+        }
+        if (o.equals(btnTimPhieuThue)){
+            timPhieuThue();
+        }
+        if (o.equals(btnTimPhieuTra)){
+            timPhieuTra();
+        }
+        if (o.equals(btnTimKhachHang)){
+            timKhachHang();
+        }
+        if (o.equals(btnTimNhanVien)){
+            timNhanVien();
+        }
+        if (o.equals(btnTimTheTV)){
+            timTheThanhVien();
+        }
+        if (o.equals(btnTimTaiKhoan)){
+            timTaiKhoan();
+        }
+        if (o.equals(btnTimGiaoDich)){
+            timDoanhThu();
+        }
+        if (o.equals(btnThongKeDuLieu)){
+            int soDia = new QuanLyBangDia(kn).getDsBangDia().size();
+            int soPhieuThue = new QuanLyPhieuThue(kn).getDsPhieuThue().size();
+            int soPhieuTra = new QuanLyPhieuTra(kn).getDsPhieuTra().size();
+            int soKhachHang = new QuanLyKhachHang(kn).getDsKhachHang().size();
+            int soGiaoDich = new QuanLyDoanhThu(kn).getDsDoanhThu().size();
+            int soNhanVien = new QuanLyNhanVien(kn).getDsNhanVien().size();
+            int soTK = new QuanLyTaiKhoan(kn).getDsTaiKhoan().size();
+            String thongBao = "Hệ thống đang lưu trữ:\n" +
+                    "- " + soDia + " băng đĩa\n" +
+                    "- " + soPhieuThue + " phiếu thuê\n" +
+                    "- " + soPhieuTra + " phiếu trả\n" +
+                    "- " + soKhachHang + " khách hàng\n" +
+                    "- " + soNhanVien + " nhân viên\n" +
+                    "- " + soTK + " tài khoản nhân viên\n" +
+                    "- " + soGiaoDich + " giao dịch tạo ra doanh thu";
+            JOptionPane.showMessageDialog(this, thongBao);
+        }
+        if (o.equals(btnXemDiaBanChay)){
+            ArrayList<Integer> dsDiaBanChay = kn.xemTop10DiaDangBanChay();
+            if (dsDiaBanChay.size() == 0){
+                JOptionPane.showMessageDialog(this, "Chưa có đĩa nào được thuê trong tháng này");
+            }
+            else {
+                String dsMaDia = "";
+                for (Integer i : dsDiaBanChay)
+                    if (i != null)
+                        dsMaDia += i + "\n";
+                JOptionPane.showMessageDialog(this, "Top 10 đĩa đang thuê mạnh tháng này (theo chiều giảm dần về số lượng) có mã là: \n" + dsMaDia);
+            }
+        }
+        if (o.equals(btnXemDiaBanE)){
+            if (new QuanLyPhieuThue(kn).getDsPhieuThue().size() != 0){
+                ArrayList<Integer> dsDiaE = kn.xemTop10DiaBanE();
+                if (dsDiaE.size() == 0){
+                    JOptionPane.showMessageDialog(this, "Mọi đĩa đều được cho thuê");
+                }
+                else {
+                    String dsMaDia = "";
+                    for (Integer i : dsDiaE)
+                        if (i != null)
+                            dsMaDia += i + "\n";
+                    JOptionPane.showMessageDialog(this, "Top 10 đĩa không ai thuê tháng này có mã là: \n" + dsMaDia);
+                }
+            }
+            else
+                JOptionPane.showMessageDialog(this, "Chưa có đĩa nào được mượn trong tháng này");
+        }
+        if (o.equals(btnXemKhachTreDia)){
+            if (new QuanLyPhieuThue(kn).getDsPhieuThue().size() != 0){
+                ArrayList<Integer> dsMaKhach = kn.xemTop10KhachTreTraDia();
+                if (dsMaKhach.size() == 0){
+                    JOptionPane.showMessageDialog(this, "Không khách hàng nào trả đĩa trễ");
+                }
+                else {
+                    String dsMaKH = "";
+                    for (Integer i : dsMaKhach)
+                        if (i != null)
+                            dsMaKH += i + "\n";
+                    JOptionPane.showMessageDialog(this, "Top 10 khách xù đĩa lâu nhất (theo thứ tự giảm dần số ngày xù) có mã là: \n" + dsMaKH);
+                }
+            }
+             else
+                 JOptionPane.showMessageDialog(this, "Chưa có khách nào thuê đĩa trong tháng này");
+        }
+        if (o.equals(btnXemNhanVienGioi)){
+            ArrayList<String> dsTenNV = kn.xemTop2NhanVienNangSuat();
+            if (dsTenNV.size() == 0){
+                JOptionPane.showMessageDialog(this, "Không nhân viên nào tạo ra doanh thu cả");
+            }
+            else {
+                String dsTen= "";
+                for (String i : dsTenNV)
+                    if (i != null)
+                        dsTen += i + "\n";
+                JOptionPane.showMessageDialog(this, "Top 2 nhân viên giỏi nhất (theo chiều giảm dần năng suất) có mã là: \n" + dsTen);
+            }
+        }
+        if (o.equals(btnXemDiaRe)){
+            ArrayList<String> dsTenDia = kn.xemTop10DiaCoGiaThueRe();
+            if (dsTenDia.size() == 0){
+                JOptionPane.showMessageDialog(this, "Không tồn tại đĩa nào trong hệ thống");
+            }
+            else {
+                String dsDia = "";
+                for (String s : dsTenDia)
+                    if (s != null)
+                        dsDia += s + "\n";
+                JOptionPane.showMessageDialog(this, "Top 10 đĩa có giá thuê rẻ nhất (theo chiều tăng dần giá thuê) có tên là: \n" + dsDia);
+            }
+        }
     }
 
     public static void capNhatDuLieuBangDia(){
@@ -760,7 +981,7 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
                     capNhatDuLieuPhieuTra();
                 }
                 else
-                    JOptionPane.showMessageDialog(null, "Không tồn tại phiếu thuê này trong hệ thống");
+                    JOptionPane.showMessageDialog(null, "Phiếu thuê này đã được trả hết. Trả nữa làm gì");
             }
             else
                 JOptionPane.showMessageDialog(null, "Không tồn tại đĩa nào có mã này hết trơn");
@@ -772,5 +993,181 @@ public class GiaoDienLon extends JFrame implements danhSachBien, ActionListener 
         Locale vn = new Locale("vi", "vn");
         NumberFormat nf = NumberFormat.getCurrencyInstance(vn);
         JOptionPane.showMessageDialog(null, "Doanh thu của tháng " + thang + "/" + nam + " là: " + nf.format(doanhThu));
+    }
+
+    public void timDia(){
+        int maDiaCanTim = 0;
+        try {
+            maDiaCanTim = Integer.parseInt(txtTimBangDia.getText().trim());
+            int viTri = new QuanLyBangDia(kn).timBangDia(maDiaCanTim);
+            tbBangDia.clearSelection();
+            if (viTri == -1){
+                JOptionPane.showMessageDialog(this, "Không tồn tại đĩa nào có mã này hết trơn");
+                txtTimBangDia.selectAll();
+                txtTimBangDia.requestFocus();
+            }
+            else{
+                tbBangDia.addRowSelectionInterval(viTri, viTri);
+                tbBangDia.scrollRectToVisible(new Rectangle(tbBangDia.getSize()));
+                txtTimBangDia.selectAll();
+                txtTimBangDia.requestFocus();
+            }
+        } catch (Exception ex){
+            JOptionPane.showMessageDialog(this, "Định dạng mã đĩa cần tìm không hợp lệ");
+        }
+    }
+
+    public void timPhieuThue(){
+        int maPhieuThue = 0;
+        try {
+            maPhieuThue = Integer.parseInt(txtTimPhieuThue.getText().trim());
+            int viTri = new QuanLyPhieuThue(kn).timPhieuThue(maPhieuThue);
+            tbPhieuThue.clearSelection();
+            if (viTri == -1){
+                JOptionPane.showMessageDialog(this, "Không tồn tại phiếu thuê nào có mã này");
+                txtTimPhieuThue.selectAll();
+                txtTimPhieuThue.requestFocus();
+            }
+            else {
+                tbPhieuThue.addRowSelectionInterval(viTri, viTri);
+                tbPhieuThue.scrollRectToVisible(new Rectangle(tbPhieuThue.getSize()));
+                txtTimPhieuThue.selectAll();
+                txtTimPhieuThue.requestFocus();
+            }
+        } catch (Exception ex){
+            JOptionPane.showMessageDialog(this, "Định dạng mã phiếu thuê không hợp lệ");
+        }
+    }
+
+    public void timPhieuTra(){
+        int maPhieuTra = 0;
+        try {
+            maPhieuTra = Integer.parseInt(txtTimPhieuTra.getText().trim());
+            int viTri = new QuanLyPhieuTra(kn).timPhieuTra(maPhieuTra);
+            tbPhieuTra.clearSelection();
+            if (viTri == -1){
+                JOptionPane.showMessageDialog(this, "Không tồn tại phiếu trả nào có mã này");
+                txtTimPhieuTra.selectAll();
+                txtTimPhieuTra.requestFocus();
+            }
+            else {
+                tbPhieuTra.addRowSelectionInterval(viTri, viTri);
+                tbPhieuTra.scrollRectToVisible(new Rectangle(tbPhieuTra.getSize()));
+                txtTimPhieuTra.selectAll();
+                txtTimPhieuTra.requestFocus();
+            }
+        } catch (Exception ex){
+            JOptionPane.showMessageDialog(this, "Định dạng mã phiếu trả không hợp lệ");
+        }
+    }
+
+    public void timKhachHang(){
+        int maKH = 0;
+        try {
+            maKH = Integer.parseInt(txtTimKhachHang.getText().trim());
+        } catch (Exception ex){
+            JOptionPane.showMessageDialog(this, "Định dạng mã khách hàng không đúng");
+        }
+        int viTri = new QuanLyKhachHang(kn).timKhachHang(maKH);
+        tbKhachHang.clearSelection();
+        if (viTri == -1){
+            JOptionPane.showMessageDialog(this, "Không tìm thấy khách hàng nào có mã này");
+            txtTimKhachHang.selectAll();
+            txtTimKhachHang.requestFocus();
+        }
+        else {
+            tbKhachHang.addRowSelectionInterval(viTri, viTri);
+            tbKhachHang.scrollRectToVisible(new Rectangle(tbKhachHang.getSize()));
+            txtTimKhachHang.selectAll();
+            txtTimKhachHang.requestFocus();
+        }
+    }
+
+    public void timNhanVien(){
+        int maNV = 0;
+        try {
+            maNV = Integer.parseInt(txtTimNhanVien.getText().trim());
+        } catch (Exception ex){
+            JOptionPane.showMessageDialog(this, "Đinh dạng mã nhân viên không hợp lệ");
+        }
+        int viTri = new QuanLyNhanVien(kn).timNhanVien(maNV);
+        tbNhanVien.clearSelection();
+        if (viTri == -1){
+            JOptionPane.showMessageDialog(this, "Không tồn tại nhân viên nào có mã này");
+            txtTimNhanVien.selectAll();
+            txtTimNhanVien.requestFocus();
+        }
+        else {
+            tbNhanVien.addRowSelectionInterval(viTri, viTri);
+            tbNhanVien.scrollRectToVisible(new Rectangle(tbNhanVien.getSize()));
+            txtTimNhanVien.selectAll();
+            txtTimNhanVien.requestFocus();
+        }
+    }
+
+    public void timTheThanhVien(){
+        int maKH = 0;
+        try {
+            maKH = Integer.parseInt(txtTimTheTV.getText().trim());
+        } catch (Exception ex){
+            JOptionPane.showMessageDialog(this, "Định dạng mã thẻ không hợp lệ");
+        }
+        int vitri = new QuanLyThe(kn).timTheThanhVien(maKH);
+        tbTheTV.clearSelection();
+        if (vitri == -1){
+            JOptionPane.showMessageDialog(this, "Khách hàng trên chưa sở hữu thẻ thành viên nào");
+            txtTimTheTV.selectAll();
+            txtTimTheTV.requestFocus();
+        }
+        else {
+            tbTheTV.addRowSelectionInterval(vitri, vitri);
+            tbTheTV.scrollRectToVisible(new Rectangle(tbTheTV.getSize()));
+            txtTimTheTV.selectAll();
+            txtTimTheTV.requestFocus();
+        }
+    }
+
+    public void timTaiKhoan(){
+        int maTK = 0;
+        try {
+            maTK = Integer.parseInt(txtTimTaiKhoan.getText().trim());
+            int viTri = new QuanLyTaiKhoan(kn).timTaiKhoan(maTK);
+            tbTaiKhoan.clearSelection();
+            if (viTri == -1){
+                JOptionPane.showMessageDialog(this, "Không tìm thấy tài khoản nào có mã này");
+                txtTimTaiKhoan.selectAll();
+                txtTimTaiKhoan.requestFocus();
+            }
+            else {
+                tbTaiKhoan.addRowSelectionInterval(viTri, viTri);
+                tbTaiKhoan.scrollRectToVisible(new Rectangle(tbTaiKhoan.getSize()));
+                txtTimTaiKhoan.selectAll();
+                txtTimTaiKhoan.requestFocus();
+            }
+        } catch (Exception ex){
+            JOptionPane.showMessageDialog(this, "Định dạng mã tài khoản không hợp lệ");
+        }
+    }
+
+    public void timDoanhThu(){
+        int maGD = 0;
+        try {
+            maGD = Integer.parseInt(txtTimGiaoDich.getText().trim());
+            int viTri = new QuanLyDoanhThu(kn).timDoanhThu(maGD);
+            tbDoanhThu.clearSelection();
+            if (viTri == -1){
+                JOptionPane.showMessageDialog(this, "Không tìm thấy giao dịch nào có mã này");
+                txtTimGiaoDich.selectAll();
+                txtTimGiaoDich.requestFocus();
+            }
+            else {
+                tbDoanhThu.addRowSelectionInterval(viTri, viTri);
+                tbDoanhThu.scrollRectToVisible(new Rectangle(tbDoanhThu.getSize()));
+                txtTimGiaoDich.selectAll();
+                txtTimGiaoDich.requestFocus();
+            }
+        } catch (Exception ex){
+            JOptionPane.showMessageDialog(this, "Định dạng mã giao dịch không hợp lệ");
+        }
     }
 }
