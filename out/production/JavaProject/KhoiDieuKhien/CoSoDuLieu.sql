@@ -65,7 +65,7 @@ CREATE TABLE KhachHang(
 	"DiaChi" nvarchar(200) NOT NULL,
 	"SoCMND" varchar(9) NOT NULL,
 	CONSTRAINT "PK_MaKH" PRIMARY KEY ("MaKH"),
-	CONSTRAINT "FK_MaNV_KH" FOREIGN KEY ("MaKH")
+	CONSTRAINT "FK_MaNV_KH" FOREIGN KEY ("MaNV")
 		REFERENCES NhanVien("MaNV")
 )
 GO
@@ -219,11 +219,12 @@ AS
 		SET @TT = (SELECT GiaThue FROM BangDia WHERE MaBD = @MABD) * @SOLUONG
 		IF (@SODIACONLAI > 0 AND @SOLUONG <= @SODIACONLAI) -- XEM SO DIA CON LAI CUA MABD CAN MUON
 			BEGIN
-				INSERT PhieuThue(MaThe, MaNV, NgayLap) values (@MATHE, @MANV, @NGAYLAP)
-				DECLARE @MAPHIEUTHUE INT
-				SET @MAPHIEUTHUE = (SELECT TOP 1 MaPhieuThue FROM PhieuThue ORDER BY MaPhieuThue DESC)
-				INSERT ChiTietPhieuThue(MaPhieuThue, MaBD, SoLuong, NgayHetHan, ThanhTien) VALUES (@MAPHIEUTHUE, @MABD, @SOLUONG, @NGAYHH, @TT)
-
+				BEGIN
+					INSERT PhieuThue(MaThe, MaNV, NgayLap) values (@MATHE, @MANV, @NGAYLAP)
+					DECLARE @MAPHIEUTHUE INT
+					SET @MAPHIEUTHUE = (SELECT TOP 1 MaPhieuThue FROM PhieuThue ORDER BY MaPhieuThue DESC)
+					INSERT ChiTietPhieuThue(MaPhieuThue, MaBD, SoLuong, NgayHetHan, ThanhTien) VALUES (@MAPHIEUTHUE, @MABD, @SOLUONG, @NGAYHH, @TT)
+				END
 				--UPDATE SO LUONG DIA CON LAI
 				UPDATE BangDia
 				SET SoLuongTon = SoLuongTon - @SOLUONG
@@ -238,34 +239,9 @@ AS
 				FROM PhieuThue P JOIN ChiTietPhieuThue C
 					ON P.MaPhieuThue = C.MaPhieuThue
 				ORDER BY MaPhieuThue DESC
-				RETURN 1 
 			END
-		ELSE
-			RETURN -1 -- LOI, KHONG DU DIA DE CHO MUON
 	END
 GO
-
-CREATE PROC XOAPHIEUTHUE @MAPHIEUTHUE INT
-AS
-	BEGIN
-		--UDATE SO LUONG DIA
-		DECLARE @MABD INT, @SODIAHUY INT
-		SET @MABD = (SELECT MaBD FROM ChiTietPhieuThue WHERE MaPhieuThue = @MAPHIEUTHUE)
-		SET @SODIAHUY = (SELECT SoLuong FROM ChiTietPhieuThue WHERE MaPhieuThue = @MAPHIEUTHUE)
-		UPDATE BangDia
-		SET SoLuongTon = SoLuongTon + @SODIAHUY
-		WHERE MaBD = @MABD
-
-		UPDATE DoanhThu
-		SET SoTien = SoTien - (SELECT ThanhTien FROM ChiTietPhieuThue WHERE MaPhieuThue = @MAPHIEUTHUE)
-		WHERE MaTK = @MAPHIEUTHUE
-		-- THUC HIEN LENH XOA
-		DELETE FROM ChiTietPhieuThue WHERE MaPhieuThue = @MAPHIEUTHUE
-		DELETE FROM PhieuChuaTra WHERE MaPhieu = @MAPHIEUTHUE
-		DELETE FROM PhieuThue WHERE MaPhieuThue = @MAPHIEUTHUE
-	END
-GO 
-
 
 CREATE PROC THEMPHIEUTRA @MAPHIEUTHUE INT, @MATHE INT, @MANV INT, @NGAYLAP DATETIME, @MABD INT, @SOLUONG INT, 
 						@TINHTRANGDIA TINYINT
@@ -287,6 +263,13 @@ AS
 						UPDATE BangDia
 						SET SoLuongTon = SoLuongTon + @SOLUONG
 						WHERE MaBD = @MABD AND @TINHTRANGDIA = 1
+						
+						--UPDATE PHIEUCHUATRA
+						DECLARE @SOTIEN MONEY
+						SET @SOTIEN = (SELECT GiaThue FROM BangDia WHERE MaBD = @MABD)
+						UPDATE PhieuChuaTra
+						SET ThanhTien = ThanhTien - (@SOLUONG * @SOTIEN)
+						WHERE MaPhieu = @MAPHIEUTHUE AND MaBD = @MABD AND MaNV = @MANV
 
 					END
 				ELSE
@@ -296,6 +279,7 @@ AS
 					DECLARE @MaPhieuTra_M int
 					SET @MaPhieuTra_M = (SELECT TOP 1 MaPhieuTra FROM PhieuTra ORDER BY MaPhieuTra DESC)
 					INSERT ChiTietPhieuTra(MaPhieuTra, MaBD, SoLuong, TinhTrangDia, SoTienPhat) VALUES (@MaPhieuTra_M, @MABD, @SOLUONG, @TINHTRANGDIA, @SOTIENPHAT)
+					INSERT DoanhThu([MaPhieu], [LoaiPhieu], [SoTien], [ThoiGian]) VALUES (@MAPHIEUTHUE, 2, @SOTIENPHAT, @NGAYLAP)
 				END
 
 				-- Xu li tren dia chua tra
@@ -312,38 +296,16 @@ AS
 	END
 GO
 
-CREATE PROC XOAPHIEUTRA @MAPHIEUTRA INT
-AS
-	BEGIN
-		--UDATE SO LUONG DIA
-		DECLARE @MABD INT, @SODIATRA INT
-		SET @MABD = (SELECT MaBD FROM ChiTietPhieuTra WHERE MaPhieuTra = @MAPHIEUTRA)
-		SET @SODIATRA = (SELECT SoLuong FROM ChiTietPhieuTra WHERE MaPhieuTra = @MAPHIEUTRA)
-		UPDATE BangDia
-		SET SoLuongTon = SoLuongTon - @SODIATRA
-		WHERE MaBD = @MABD
-
-		UPDATE ChiTietPhieuThue
-		SET SoLuong = SoLuong + @SODIATRA
-		WHERE MaPhieuThue = (SELECT MaPhieuThue FROM PhieuTra WHERE MaPhieuTra = @MAPHIEUTRA)
-
-		-- THUC HIEN LENH XOA
-		DELETE FROM ChiTietPhieuTra WHERE MaPhieuTra = @MAPHIEUTRA
-		DELETE FROM PhieuTra WHERE MaPhieuTra = @MAPHIEUTRA
-	END
-GO
-
 CREATE PROC THEMNHANVIEN @TENNV NVARCHAR(50), @GIOITINH TINYINT, @SODT NVARCHAR(10), @MOTA NVARCHAR(150)
 AS
 	BEGIN
-		IF NOT EXISTS (SELECT * FROM NhanVien WHERE TenNV = @TENNV AND SoDT = @SODT)
+		IF NOT EXISTS (SELECT * FROM NhanVien WHERE SoDT = @SODT)
 			BEGIN
 				INSERT NhanVien([TenNV], [GioiTinh], [SoDT], [MoTa]) 
 				VALUES (@TENNV, @GIOITINH, @SODT, @MOTA)
 			END
 	END
 GO
-
 
 CREATE PROC CAPNHATNHANVIEN @MANV INT, @SODT NVARCHAR(10), @MOTA NVARCHAR(15)
 AS
@@ -479,9 +441,18 @@ GO
 CREATE PROC TAITAOTHE @MAKH INT, @NGAYLAP DATETIME, @NGAYHH DATETIME
 AS
 	BEGIN
-		EXEC XOATHETHANHVIEN @MAKH
-		INSERT TheThanhVien([MaKH], [NgayLap], [NgayHetHan])
-		VALUES (@MAKH, @NGAYLAP, @NGAYHH)
+		IF NOT EXISTS (SELECT MaThe FROM THETHANHVIEN WHERE MaKH = @MAKH)
+			BEGIN
+				INSERT TheThanhVien(MaKH, NgayLap, NgayHetHan)
+				VALUES (@MAKH, @NGAYLAP, @NGAYHH)
+			END
+		ELSE
+			BEGIN
+				UPDATE TheThanhVien
+				SET NgayLap = @NGAYLAP,
+				NgayHetHan = @NGAYHH
+				WHERE MaKH = @MAKH
+			END
 	END
 GO 
 
@@ -556,4 +527,23 @@ EXEC THEMNHANVIEN N'PHẠM QUANG MINH', 1, '0123456', N'Đồng sáng lập'
 GO
 
 EXEC THEMTAIKHOAN '17035151', 1
+GO
+
+EXEC THEMBANGDIA N'Con gà biết bay', N'Hài kịch', 1, 'NoobBoy', '', 20, 320000, 20000
+EXEC THEMBANGDIA N'Bí ẩn Amazon', N'Khám phá', 1, 'NatGeo', '', 22, 300000, 23000
+EXEC THEMBANGDIA N'Đặc vụ bim bim', N'Trinh thám', 1, 'Sherlock', '', 30, 120000, 37000
+EXEC THEMBANGDIA N'Rừng già Campuchia', N'Khám phá', 1, 'NatGeo', '', 25, 150000, 23000
+EXEC THEMBANGDIA N'Chó sói đơn độc', N'Khám phá', 1, 'NatGeo', '', 16, 450000, 41000
+EXEC THEMBANGDIA N'Vạn dặm hành kinh', N'Hài kịch', 1, 'NoobBoy', '', 38, 240000, 21000
+EXEC THEMBANGDIA N'Ngựa già phố Hàng Mã', N'Hài kịch', 1, 'NorthBooby', '', 20, 180000, 19000
+EXEC THEMBANGDIA N'Gió lạnh đầu mùa', N'Tình cảm', 1, N'Thạch Lam', '', 29, 148000, 15000
+EXEC THEMBANGDIA N'Bỏ anh. Em lấy chồng', N'Tình cảm', 1, N'Người nhà quê', '', 31, 217000, 45000
+EXEC THEMBANGDIA N'Bay qua Biển Bắc', N'Khám phá', 1, 'RussianFilm', '', 30, 220000, 39000
+EXEC THEMBANGDIA N'Người chồng thích hát', N'Hài kịch', 1, 'Russian Film', '', 22, 230000, 32000
+EXEC THEMBANGDIA N'Phố biển Thủ Đức', N'Châm biếm', 1, N'Người nhà quê', '', 26, 410000, 22000
+EXEC THEMBANGDIA N'Trốn Tìm', N'Tự sự', 1, N'Đen Vâu', '', 40, 230000, 27000
+EXEC THEMBANGDIA N'Chuyến bay chết chóc', N'Hình Sự', 1, 'Camtasia Studio', '', 44, 580000, 15000
+EXEC THEMBANGDIA N'Con bug khó chịu', N'Bi kịch', 1, 'Nhom5', '', 15, 522000, 33000
+EXEC THEMBANGDIA N'Bitch Coin - vua tiền số', N'Hài kịch', 1, 'Crypto Joke', '', 40, 341000, 22000
+
 GO

@@ -15,6 +15,10 @@ public class PhieuThue extends Phieu {
         this.tongTienThue = tongTienThue;
     }
 
+    public PhieuThue(int maPhieu) {
+        super(maPhieu);
+    }
+
     public Date getNgayHetHan() {
         return ngayHetHan;
     }

@@ -4,6 +4,8 @@ import DoiTuong.NhanVien;
 import KhoiDieuKhien.KetNoiToiCoSoDuLieu;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class QuanLyNhanVien {
     private ArrayList<NhanVien> dsNhanVien;
@@ -24,11 +26,64 @@ public class QuanLyNhanVien {
         return kn.xoaNhanVien(maNV);
     }
 
-    public int timNhanVien(int maNV){
+    public NhanVien timNhanVien(String soDT){
         for (NhanVien nv : dsNhanVien)
-            if (nv.getID() == maNV)
-                return dsNhanVien.indexOf(nv);
-        return -1;
+            if (nv.getSoDT().equals(soDT))
+                return nv;
+        return null;
     }
 
+    public void sapXepTangDanTheoTenNV(){
+        Collections.sort(dsNhanVien, new Comparator<NhanVien>() {
+            @Override
+            public int compare(NhanVien o1, NhanVien o2) {
+                if (o1.getTen().compareTo(o2.getTen()) > 1)
+                    return 1;
+                if (o1.getID() == o2.getID())
+                    return 0;
+                return -1;
+            }
+        });
+    }
+
+    public void sapXepGiamDanTheoTenNV(){
+        Collections.sort(dsNhanVien, new Comparator<NhanVien>() {
+            @Override
+            public int compare(NhanVien o1, NhanVien o2) {
+                if (o1.getTen().compareTo(o2.getTen()) < 1)
+                    return 1;
+                if (o1.getID() == o2.getID())
+                    return 0;
+                return -1;
+            }
+        });
+    }
+
+    public void sapXepGiamDanTheoMaNV(){
+        Collections.sort(dsNhanVien, new Comparator<NhanVien>() {
+            @Override
+            public int compare(NhanVien o1, NhanVien o2) {
+                if (o1.getID() < o2.getID())
+                    return 1;
+                if (o1.getID() == o2.getID())
+                    return 0;
+                return -1;
+            }
+        });
+    }
+
+    public int doLonDuLieu(){
+        return dsNhanVien.size();
+    }
+
+    public int[] phanLoaiNhanVienTheoGT(){
+        int soNVNam = 0, soNVNu = 0;
+        for (NhanVien nv : dsNhanVien)
+            if (nv.getGioiTinh() == 1)
+                soNVNam++;
+            else
+                soNVNu++;
+        int[] gtriTraVe = {soNVNam, soNVNu};
+        return gtriTraVe;
+    }
 }

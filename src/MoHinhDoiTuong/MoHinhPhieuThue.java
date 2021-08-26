@@ -18,7 +18,7 @@ public class MoHinhPhieuThue extends AbstractTableModel {
     private static final int ngayHetHan = 6;
     private static final int thanhTien = 7;
     private ArrayList<PhieuThue> dsPhieuThue;
-    private String[] tieuDe = "Mã phiếu thuê;Mã thẻ;Mã NV Lập;Ngày lập;Mã đĩa thuê;Số lượng;Ngày hết hạn thuê; Thành tiền".split(";");
+    private String[] tieuDe = "Mã phiếu thuê;Mã thẻ khách thuê;Mã NV Lập;Ngày lập;Mã đĩa thuê;Số lượng thuê;Ngày hết hạn thuê; Thành tiền".split(";");
 
     public MoHinhPhieuThue(ArrayList<PhieuThue> dsPhieuThue){
         this.dsPhieuThue = dsPhieuThue;

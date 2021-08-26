@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.*;
 
@@ -92,20 +91,28 @@ public class CSKhachHang extends JFrame implements ActionListener, danhSachRegex
 
     }
 
-    public static void main(String[] args) {
-        new CSKhachHang().datTinhTrangCacNut(false);
-    }
-
-    public void datTinhTrangCacNut(boolean tinhTrang){
-        if (tinhTrang){
+    public void datTinhTrangCacNut(int tinhTrang){
+        if (tinhTrang == 1){
             btncapnhatkh.setEnabled(false);
+            setTitle("Thêm khách hàng");
         }
-        else {
+        if (tinhTrang == 2) {
+            setTitle("Cập nhật khách hàng");
             btnthemkh.setEnabled(false);
             btncapnhatkh.setEnabled(true);
             txtcmnd.setEditable(false);
             txttenkh.setEditable(false);
-            combobox.setEnabled(false);
+            combobox.setEditable(false);
+        }
+        if (tinhTrang == 3){
+            setTitle("Xem thông tin khách hàng");
+            btnthemkh.setEnabled(false);
+            btncapnhatkh.setEnabled(false);
+            txtcmnd.setEditable(false);
+            txttenkh.setEditable(false);
+            txtsdtkh.setEditable(false);
+            txtdiachi.setEditable(false);
+            combobox.setEditable(false);
         }
     }
 

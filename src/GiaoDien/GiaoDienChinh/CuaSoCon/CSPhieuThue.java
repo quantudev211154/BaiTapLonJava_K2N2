@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
 
@@ -19,6 +20,7 @@ public class CSPhieuThue extends JFrame implements ActionListener {
     public JButton btnTaoPhieu;
 
     public CSPhieuThue() {
+        setTitle("Tạo phiếu thuê");
         setSize(380,450);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -82,6 +84,33 @@ public class CSPhieuThue extends JFrame implements ActionListener {
         setVisible(true);
     }
 
+    public static void ganGiaTriChoTxtMaDia(int maDia){
+        txtMadiamuon.setText(maDia+"");
+    }
+
+    public static void hienThiDuLieuLenTXT(PhieuThue p){
+        txtMathe.setText(p.getMaThe()+"");
+        txtMadiamuon.setText(p.getMaBD()+"");
+        txtSlDia.setText(p.getSoLuong()+"");
+        long diff = Math.abs(p.getNgayHetHan().getTime() - p.getNgayLap().getTime());
+        txtSongaymuon.setText(TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)+"");
+
+    }
+
+    public void datTinhTrangChoNut(boolean tinhTrang){
+        if (tinhTrang == true){
+            setTitle("Tạo phiếu thuê");
+        }
+        else {
+            setTitle("Xem thông tin phiếu thuê");
+            txtSongaymuon.setEditable(false);
+            txtMadiamuon.setEditable(false);
+            txtSlDia.setEditable(false);
+            txtMathe.setEditable(false);
+            btnTaoPhieu.setEnabled(false);
+        }
+    }
+
     public static PhieuThue layDuLieuTuTXT(){
         if (!txtMathe.getText().trim().equals("")
             && !txtMadiamuon.getText().trim().equals("")
@@ -135,6 +164,7 @@ public class CSPhieuThue extends JFrame implements ActionListener {
                 txtSlDia.setText("");
                 txtSongaymuon.setText("");
                 txtMadiamuon.requestFocus();
+                JOptionPane.showMessageDialog(this, "Hóa đơn đã được in xong.");
             }
         }
     }

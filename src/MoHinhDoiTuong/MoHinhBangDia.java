@@ -4,6 +4,7 @@ package MoHinhDoiTuong;
 import DoiTuong.BangDia;
 
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableRowSorter;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;

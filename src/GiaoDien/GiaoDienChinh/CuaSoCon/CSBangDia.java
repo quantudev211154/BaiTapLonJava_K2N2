@@ -9,7 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.regex.Pattern;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class CSBangDia extends JFrame implements ActionListener {
     public JLabel lbTenBD, lbTheLoai, lbHangSX, lbGhiChu, lbSoLuong, lbDonGia, lbGiaThue;
@@ -117,14 +118,28 @@ public class CSBangDia extends JFrame implements ActionListener {
         add(hopChua);
     }
 
-    public void datTinhTrangCacNut(boolean tinhHuong){
-        if (tinhHuong == true){
+    public void datTinhTrangCacNut(int tinhHuong){
+        if (tinhHuong == 1){
+            setTitle("Thêm băng đĩa");
             btnThemDia.setEnabled(true);
             btnCapNhatDia.setEnabled(false);
         }
-        else {
+        if (tinhHuong == 2) {
             btnThemDia.setEnabled(false);
             btnCapNhatDia.setEnabled(true);
+            setTitle("Cập nhật thông tin băng đĩa");
+        }
+        if (tinhHuong == 3){
+            setTitle("Xem thông tin băng đĩa");
+            btnThemDia.setEnabled(false);
+            btnCapNhatDia.setEnabled(false);
+            txtGiaThue.setEditable(false);
+            txtTenBD.setEditable(false);
+            txtDonGia.setEditable(false);
+            txtSoLuong.setEditable(false);
+            txtTheLoai.setEditable(false);
+            txtHangSX.setEditable(false);
+            txtGhiChu.setEditable(false);
         }
     }
 
@@ -168,12 +183,14 @@ public class CSBangDia extends JFrame implements ActionListener {
     }
 
     public static void hienThiDuLieuDiaLenTXT(BangDia bd){
+        Locale vn = new Locale("vi", "vn");
+        NumberFormat nf = NumberFormat.getCurrencyInstance(vn);
         txtTenBD.setText(bd.getTenBD());
         txtTheLoai.setText(bd.getTheLoai());
         txtHangSX.setText(bd.getHangSX());
         txtSoLuong.setText(bd.getSoLuongGoc()+"");
-        txtDonGia.setText(bd.getDonGia()+"");
-        txtGiaThue.setText(bd.getGiaThue()+"");
+        txtDonGia.setText(nf.format(bd.getDonGia()));
+        txtGiaThue.setText(nf.format(bd.getGiaThue()));
     }
 
     @Override
@@ -195,8 +212,11 @@ public class CSBangDia extends JFrame implements ActionListener {
         }
         if (o.equals(btnCapNhatDia)){
             BangDia bd = taoDoiTuongTuTXT();
-            if (bd != null)
+            if (bd != null){
                 GiaoDienLon.capNhatDia(bd);
+                dispose();
+            }
+
         }
     }
 }

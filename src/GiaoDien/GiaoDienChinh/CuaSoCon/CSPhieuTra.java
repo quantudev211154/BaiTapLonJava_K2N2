@@ -15,9 +15,9 @@ import java.util.Date;
 
 public class CSPhieuTra extends JFrame implements ActionListener {
     public JLabel lblMaPhieuThue,lblTheKH,lblMaDiaTra,lblSlTra,lblTinhTrangDia;
-    public JTextField txtMaPhieuThue,txtTheKH,txtMaDiaTra,txtSlTra;
+    public static JTextField txtMaPhieuThue,txtTheKH,txtMaDiaTra,txtSlTra;
     public JButton btnTaoPhieuTra;
-    public JComboBox combobox;
+    public static JComboBox combobox;
 
     public CSPhieuTra() {
         setSize(390,500);
@@ -72,7 +72,7 @@ public class CSPhieuTra extends JFrame implements ActionListener {
         lblTinhTrangDia.setFont(ft);
         lblTinhTrangDia.setBounds(10, 275, 150, 30);
 
-        String[ ] Tinhtrang = {"Hoàn hảo","Đã hỏng"};
+        String[] Tinhtrang = {"Hoàn hảo","Đã hỏng"};
         combobox = new JComboBox(Tinhtrang);
         combobox.setBounds(10, 310, 350, 40);
 
@@ -91,6 +91,29 @@ public class CSPhieuTra extends JFrame implements ActionListener {
         add(combobox);
         btnTaoPhieuTra.addActionListener(this);
         setVisible(true);
+    }
+
+    public static void hienThiDuLieuLenTXT(PhieuTra p){
+        txtTheKH.setText(p.getMaThe()+"");
+        txtSlTra.setText(p.getSoLuong()+"");
+        txtMaPhieuThue.setText(p.getMaPhieuThue()+"");
+        txtMaDiaTra.setText(p.getMaBD()+"");
+        combobox.setSelectedIndex((p.getTinhTrangDia() == 1) ? 0 :1);
+    }
+
+    public void datTinhTrangCacNut(boolean tinhTrang){
+        if (tinhTrang == true){
+            setTitle("Tạo phiếu trả");
+        }
+        else{
+            setTitle("Xem thông tin phiếu trả");
+            txtSlTra.setEditable(false);
+            txtMaPhieuThue.setEditable(false);
+            txtMaDiaTra.setEditable(false);
+            txtMaPhieuThue.setEditable(false);
+            txtTheKH.setEditable(false);
+            btnTaoPhieuTra.setEnabled(false);
+        }
     }
 
     public PhieuTra layDuLieuTuTXT(){
@@ -130,6 +153,13 @@ public class CSPhieuTra extends JFrame implements ActionListener {
         return null;
     }
 
+    public static void taoPhieuTraTuCSPhieuThue(PhieuThue p){
+        txtMaDiaTra.setText(p.getMaBD()+"");
+        txtMaPhieuThue.setText(p.getMaPhieu()+"");
+        txtTheKH.setText(p.getMaThe()+"");
+        txtSlTra.requestFocus();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
@@ -141,9 +171,11 @@ public class CSPhieuTra extends JFrame implements ActionListener {
                 txtMaDiaTra.setText("");
                 txtSlTra.setText("");
                 txtMaPhieuThue.requestFocus();
+                JOptionPane.showMessageDialog(this, "Hóa đơn đã được in xong.");
             }
         }
     }
+
 }
 
 

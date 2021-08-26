@@ -10,7 +10,7 @@ public abstract class Nguoi {
      * GioiTinh = False => Nu (Female)
      */
     private int gioiTinh = 1;
-    private String soDT = "";
+    protected String soDT = "";
 
     public Nguoi(int ID) {
         this.ID = ID;

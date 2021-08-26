@@ -83,15 +83,26 @@ public class CSNhanVien extends JFrame implements ActionListener, danhSachRegex 
         setVisible(true);
     }
 
-    public void datTinhTrangCacNut(boolean tinhTrang){
-        if (tinhTrang == true){
+    public void datTinhTrangCacNut(int tinhTrang){
+        if (tinhTrang == 1){
+            setTitle("Thêm nhân viên");
             btncapnhat.setEnabled(false);
         }
-        else {
-            btncapnhat.setEnabled(true);
+        if (tinhTrang == 2) {
+            setTitle("Cập nhật thông tin nhân viên");
+            btncapnhat.setEnabled(false);
             btnthem.setEnabled(false);
             txtten.setEditable(false);
             combobox.setEnabled(false);
+        }
+        if (tinhTrang == 3){
+            setTitle("Xem thông tin nhân viên");
+            btncapnhat.setEnabled(false);
+            btnthem.setEnabled(false);
+            txtsdt.setEditable(false);
+            txtten.setEditable(false);
+            txtmota.setEditable(false);
+            combobox.setEditable(false);
         }
     }
 

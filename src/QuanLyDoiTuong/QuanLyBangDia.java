@@ -4,7 +4,7 @@ import DoiTuong.BangDia;
 import KhoiDieuKhien.KetNoiToiCoSoDuLieu;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.*;
 
 public class QuanLyBangDia {
     private ArrayList<BangDia> dsBangDia;
@@ -30,12 +30,12 @@ public class QuanLyBangDia {
         return kn.capNhatDia(maBD, tenBD_M, theLoai_M, hangSX_M, ghiChu_M, slGoc_M, donGia_M, giaThue_M);
     }
 
-    public int timBangDia(int maBD){
+    public BangDia timBangDia(int maBD){
         for (BangDia bd : dsBangDia){
             if (bd.getMaBD() == maBD)
-                return dsBangDia.indexOf(bd);
+                return bd;
         }
-        return -1;
+        return null;
     }
 
     public boolean kiemTraDia(int maDia){
@@ -45,4 +45,98 @@ public class QuanLyBangDia {
         return false;
     }
 
+    public int doLonDuLieu(){
+        return dsBangDia.size();
+    }
+
+    public int tinhSoTheLoai(){
+        Set<String> dsTheLoai = new HashSet<>();
+        for (BangDia bd : dsBangDia){
+            dsTheLoai.add(bd.getTheLoai());
+        }
+        return dsTheLoai.size();
+    }
+
+    public int tinhSoHangSX(){
+        Set<String> dsHangSX = new HashSet<>();
+        for (BangDia bd : dsBangDia)
+            dsHangSX.add(bd.getHangSX());
+        return dsHangSX.size();
+    }
+
+    public double[] xemHaiCucGiaThue(){
+        double giaThueCaoNhat = 0, giaThueThapNhat = dsBangDia.get(0).getGiaThue();
+        for (BangDia bd : dsBangDia){
+            if (bd.getGiaThue() >= giaThueCaoNhat)
+                giaThueCaoNhat = bd.getGiaThue();
+            if (bd.getGiaThue() <= giaThueThapNhat)
+                giaThueThapNhat = bd.getGiaThue();
+        }
+        double[] duLieuTraVe = {giaThueCaoNhat, giaThueThapNhat};
+        return duLieuTraVe;
+    }
+
+    public double[] xemHaiCucDonGia(){
+        double donGiaCaoNhat = 0, donGiaThapNhat = dsBangDia.get(0).getDonGia();
+        for (BangDia bd : dsBangDia){
+            if (bd.getDonGia() >= donGiaCaoNhat)
+                donGiaCaoNhat = bd.getDonGia();
+            if (bd.getDonGia() < donGiaThapNhat)
+                donGiaThapNhat = bd.getDonGia();
+        }
+        double[] duLieuTraVe = {donGiaCaoNhat, donGiaThapNhat};
+        return duLieuTraVe;
+    }
+
+    public void sapXepDonGiaTangDan(){
+        Collections.sort(dsBangDia, new Comparator<BangDia>() {
+            @Override
+            public int compare(BangDia o1, BangDia o2) {
+                if (o1.getDonGia() > o2.getDonGia())
+                    return 1;
+                if (o1.getDonGia() == o2.getDonGia())
+                    return 0;
+                return -1;
+            }
+        });
+    }
+
+    public void sapXepDonGiaGiamDan(){
+        Collections.sort(dsBangDia, new Comparator<BangDia>() {
+            @Override
+            public int compare(BangDia o1, BangDia o2) {
+                if (o1.getDonGia() < o2.getDonGia())
+                    return 1;
+                if (o1.getDonGia() == o2.getDonGia())
+                    return 0;
+                return -1;
+            }
+        });
+    }
+
+    public void sapXepGiaThueTangDan(){
+        Collections.sort(dsBangDia, new Comparator<BangDia>() {
+            @Override
+            public int compare(BangDia o1, BangDia o2) {
+                if (o1.getGiaThue() > o2.getGiaThue())
+                    return 1;
+                if (o1.getDonGia() == o2.getDonGia())
+                    return 0;
+                return -1;
+            }
+        });
+    }
+
+    public void sapXepGiaThueGiamDan(){
+        Collections.sort(dsBangDia, new Comparator<BangDia>() {
+            @Override
+            public int compare(BangDia o1, BangDia o2) {
+                if (o1.getGiaThue() < o2.getGiaThue())
+                    return 1;
+                if (o1.getDonGia() == o2.getDonGia())
+                    return 0;
+                return -1;
+            }
+        });
+    }
 }

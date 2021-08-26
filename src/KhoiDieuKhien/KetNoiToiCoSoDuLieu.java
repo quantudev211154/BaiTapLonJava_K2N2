@@ -374,7 +374,7 @@ public class KetNoiToiCoSoDuLieu {
             PreparedStatement ps = conn.prepareStatement(cauLenhTaiTao);
             ps.setInt(1, maKH);
             ps.setDate(2, new Date(ttv.getNgayLap().getTime()));
-            ps.setDate(3, new Date(ttv.getNgayLap().getTime()));
+            ps.setDate(3, new Date(ttv.getNgayHetHan().getTime()));
             return ps.executeUpdate() > 0;
         } catch (Exception ex){
             ex.printStackTrace();
